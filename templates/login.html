@@ -1,0 +1,23 @@
+{% extends 'template.html' %}
+
+
+{% block content %}
+
+    <h1 class='title'>
+        {% block title %} 
+            Login
+        {% endblock %}
+    </h1>
+    <p>
+        {% if error == 1 %}
+            Either your username was not recognised,</br> or your password was incorrect.
+        {% else %}
+            Please Login below, or <a href='/register'>Register</a>
+        {% endif %} 
+    </p>
+    <form method="POST" action="/login">
+        <input placeholder="Username" name="username"/></br>
+        <input placeholder="Password" name="password" type="password"/></br>
+        <input type="submit" value="Log In" />
+    </form>
+{% endblock %}

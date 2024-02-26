@@ -1,0 +1,43 @@
+{% extends 'template.html' %}
+
+
+{% block content %}
+
+    <h1 class='title'>
+        {% block title %} 
+            Payloads
+        {% endblock %}
+    </h1>
+        <p>Save a script below, and requests to /{{ session['identifier'] }}/serve.js will return it</br></br>
+        You can also load a presaved script here: <select id="presaved" name="presaved" onchange="populate(this);">
+            <option value="">--New--</option>
+            {%for i in content%}
+                <option value="{{i[1]}}">{{i[0]}}</option>
+            {%endfor%}
+        </select>
+    </p>
+        <form method="POST" action="/script">
+            <label for="scriptname">Script Name:</label>
+            <input id="scriptname" placeholder="Script Name" name="name" value=""/>
+            </br>
+            <textarea onchange="document.getElementById('activate_button').innerHTML = 'Set as Active';" id="the_script" name="the_script" rows="5" cols="70" autofocus></textarea></br>
+            <button type="button" id="activate_button" onclick="set_script_as_active()">Set as Active</button>
+            <input style="padding: 5px;" type="submit" value="Save"/>
+        </form>
+        </br></br>
+    <script>
+        function populate(sel) {
+            document.getElementById('activate_button').innerHTML = 'Set as Active';
+            var script = sel.value;
+            var script_name = sel.options[sel.selectedIndex].text;
+            document.getElementById('the_script').innerHTML = script;
+            document.getElementById('scriptname').value = script_name;
+            return true;
+        };
+        async function set_script_as_active() {
+            fetch('/script?name='.concat(document.getElementById('scriptname').value));
+            document.getElementById('activate_button').innerHTML = 'Activated!';
+            return true;
+        };
+    </script>
+{% endblock %}

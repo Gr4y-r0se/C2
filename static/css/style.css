@@ -1,0 +1,73 @@
+:root {
+  background: rgb(25,25,25) 
+  url(../img/background.jpg) 
+  center 
+  no-repeat;
+
+  text-align: center;
+  color: #fff;
+}
+
+
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  display: table;
+  margin: auto;
+}
+
+button {
+  padding: 4px;
+}
+
+body {
+  align-content: top;
+  display: table-cell;
+  width: 75%;
+  vertical-align: middle;
+}
+input {
+  background-color: rgba(0 0 0 1);
+  margin: 5px;
+}
+
+table, th, td {
+  border: 1px solid;
+  padding: 5px;
+  border-collapse: collapse;
+  border-color: rgb(255, 255, 255);
+}
+
+.content {
+  background-color: rgb(38 38 38);
+  padding: 10px;
+  width: 75%;
+  height: 60%;
+}
+
+.name {
+  position: fixed;
+  top: 0;
+  left: 5px;
+}
+
+.title {
+   text-decoration: underline solid rgb(200, 200, 200);
+}
+
+.main {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  letter-spacing: 1.6px;
+  word-spacing: 1px;
+  color: #ffffff;
+  font-weight: normal;
+  text-decoration: solid rgb(200, 200, 200);
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+}

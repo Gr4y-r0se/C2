@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>P2-C2 - {% block title %} {% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+    </head>
+    <body>
+        <div class='name'>
+        <p >
+            {% if name != '' %}
+                Greetings, {{ session['name'] }}
+            {% else %}
+                Please <a href='/login'>Log In</a> or <a href='/register'>Register</a>
+            {% endif %} 
+            <nav class='nav'>
+                <a href="/view">View Interactions</a></br>
+                <a href="/script">Manage Payloads</a></br>
+                {% if session['name'] %}
+                <a href="/logout">Log Out</a>
+                {% else %}
+                <a href="/register">Register</a></br>
+                {% endif %}
+            </nav>
+        </p>
+        </div>
+        <div class="main">
+        {% block content %} {% endblock %}
+        </div>
+    </body>
+</html>
