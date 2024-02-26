@@ -8,14 +8,9 @@ from uuid import uuid4
 
 from __main__ import app
 from flask import (
-    Flask,
-    flash,
     make_response,
-    redirect,
     render_template,
     request,
-    session,
-    url_for,
 )
 from werkzeug.security import generate_password_hash
 

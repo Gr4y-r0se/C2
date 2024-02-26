@@ -11,5 +11,5 @@ if __name__ == "__main__":
     if not os.path.exists("db/c2.db"):
         setup()
     app.run(
-        host="0.0.0.0", port="80", debug=True
-    )  # ,ssl_context=('certificates/cert.pem', 'certificates/key.pem'),debug=True)
+        host="0.0.0.0", port="443", debug=False
+    ssl_context=('certificates/cert.pem', 'certificates/key.pem'),debug=True)
