@@ -1,19 +1,15 @@
 import sqlite3
 from datetime import datetime
-from json import dumps, loads
+from json import loads
 from time import time
 from uuid import uuid4
 
 from __main__ import app
 from flask import (
-    Flask,
-    flash,
     make_response,
-    redirect,
     render_template,
     request,
     session,
-    url_for,
 )
 
 from .support import check_auth
@@ -70,7 +66,7 @@ def collect(id):
 
 
 @app.route("/clear", methods=["POST"])
-# @check_auth
+@check_auth
 def clear():
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
@@ -84,9 +80,8 @@ def clear():
 
 
 @app.route("/view", methods=["GET"])
-# @check_auth
+@check_auth
 def view():
-    resp = make_response()
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
     data = cursor.execute(

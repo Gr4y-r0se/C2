@@ -3,7 +3,6 @@ import sqlite3
 import os
 from flask import request, make_response
 from time import time
-from datetime import datetime
 from uuid import uuid4
 from werkzeug.security import generate_password_hash
 from functools import wraps
@@ -21,12 +20,12 @@ def check_auth(f):
             name, timestamp = cursor.execute(
                 """SELECT username,time FROM cookies WHERE cookie = ?""", (cookie,)
             ).fetchall()[0]
-            print(name, timestamp)
+            
             if (time() - timestamp) > 600:
                 cursor.execute("""DELETE FROM cookies WHERE cookie = ?""", (cookie,))
                 raise ValueError
         except Exception as e:
-            print(e)
+
             resp.status = "302"
             resp.headers["Location"] = "/login"
             connection.commit()
@@ -72,22 +71,45 @@ def setup():
         cookie TEXT,
         time INT)"""
     )
+    admin_id = str(uuid4())
+    admin_password = "".join(
+        random.choice(string.ascii_lowercase + string.digits) for _ in range(15)
+    )
+    print("\n\n\tNew deployment detected. Admin password is: %s\n\n" % (admin_password))
     cursor.execute(
         """INSERT INTO users (uuid, username, identifier, permissions, password) VALUES (?, ?, ?, ?, ?);""",
         (
-            str(uuid4()),
+            admin_id,
             "admin",
             "".join(
                 random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
             ),
             0,
             generate_password_hash(
-                "SPIEL-troupe-emir-seeming-pond", method="sha512", salt_length=12
+                admin_password, method="pbkdf2", salt_length=12
             ),
         ),
     )
-    # cursor.execute('''INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?);''',(str(uuid4()),"alert(1)", 1, "alert(1);",))
-    # cursor.execute('''INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);''',(str(uuid4()),"alert cookies", str(uuid4()), 0, "alert(document.cookie);",))
-    # move these to register
+    cursor.execute(
+        """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
+        (
+            str(uuid4()),
+            "alert 1",
+            "admin",
+            1,
+            "alert(1);",
+        ),
+    )
+    cursor.execute(
+        """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
+        (
+            str(uuid4()),
+            "alert cookies",
+            "admin",
+            0,
+            "alert(document.cookie);",
+        ),
+    )
+
     connection.commit()
     connection.close()

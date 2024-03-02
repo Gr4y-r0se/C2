@@ -33,7 +33,7 @@ def register():
         except:
             pass
 
-        if len(form_data["password"]) < 15:
+        if len(form_data["password"]) < 8:
             resp.headers["Location"] = "/register?error=2"
             return resp
 
@@ -52,10 +52,11 @@ def register():
                 random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
             )
         resp.headers["Location"] = "/login"
+        user_id = str(uuid4())
         cursor.execute(
             """INSERT INTO users (uuid, username, identifier, permissions, password) VALUES (?, ?, ?, ?, ?);""",
             (
-                str(uuid4()),
+                user_id,
                 form_data["username"],
                 "".join(
                     random.choice(string.ascii_lowercase + string.digits)
@@ -63,8 +64,28 @@ def register():
                 ),
                 1,
                 generate_password_hash(
-                    form_data["password"], method="sha512", salt_length=12
+                    form_data["password"], method="pbkdf2", salt_length=12
                 ),
+            ),
+        )
+        cursor.execute(
+            """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?);""",
+            (
+                str(uuid4()),
+                "alert 1",
+                user_id,
+                1,
+                "alert(1);",
+            ),
+        )
+        cursor.execute(
+            """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
+            (
+                str(uuid4()),
+                "alert cookies",
+                user_id,
+                0,
+                "alert(document.cookie);",
             ),
         )
 

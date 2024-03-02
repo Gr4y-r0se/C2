@@ -1,22 +1,20 @@
 import sqlite3
 from uuid import uuid4
+from datetime import datetime
+from time import time
 
 from __main__ import app
 from flask import (
-    Flask,
-    flash,
     make_response,
-    redirect,
     render_template,
     request,
     session,
-    url_for,
 )
 
 from .support import check_auth
 
 
-@app.route("/<id>/serve.xml", methods=["GET"])
+@app.route("/<id>/serve.js", methods=["GET"])
 def serve(id):
     resp = make_response()
     connection = sqlite3.connect("db/c2.db")
@@ -28,20 +26,31 @@ def serve(id):
     except IndexError:
         resp.status = "500"
         return resp
-    script = cursor.execute(
-        """SELECT script FROM scripts WHERE active = 1 AND owner = ?;""", (owner,)
-    ).fetchall()[0][0]
+    script,script_name = cursor.execute(
+        """SELECT script,name FROM scripts WHERE active = 1 AND owner = ?;""", (owner,)
+    ).fetchall()[0]
+    cursor.execute(
+            """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ? ,?);""",
+            (
+                str(uuid4()),
+                str(datetime.utcfromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
+                str(request.remote_addr),
+                "GET",
+                "Fetched script titled '%s'"%script_name,
+                owner,
+            ),
+        ) #Log this in 'interactions' 
     connection.commit()
     connection.close()
-
+    resp.access_control_allow_origin = '*'
     resp.status = "200"
-    resp.mimetype = "text/xml"
+    resp.mimetype = "text/javascript"
     resp.data = script
     return resp
 
 
 @app.route("/script", methods=["GET", "POST"])
-# @check_auth
+@check_auth
 def save_script():
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()

@@ -1,21 +1,15 @@
-import os
 import random
 import sqlite3
 import string
-from datetime import datetime
 from time import time
 from uuid import uuid4
 
 from __main__ import app
 from flask import (
-    Flask,
-    flash,
     make_response,
-    redirect,
     render_template,
     request,
     session,
-    url_for,
 )
 from werkzeug.security import check_password_hash
 
@@ -27,7 +21,6 @@ from .support import check_auth
 def logout():
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
-    auth = request.cookies.get("auth_cookie")
     cursor.execute("""DELETE FROM cookies WHERE username = ?""", (session["name"],))
     session.pop("auth_cookie")
     session.pop("identifier")
