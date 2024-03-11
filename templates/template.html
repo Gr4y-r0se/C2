@@ -4,23 +4,49 @@
         <meta charset="UTF-8">
         <title>P2-C2 - {% block title %} {% endblock %}</title>
         <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     </head>
     <body>
-        <div class='name'>
+        <div class='sidebar'>
+            <h2>
+                Connect and Control
+            </h2>
         <p >
-            {% if name != '' %}
-                Greetings, {{ session['name'] }}
-            {% else %}
-                Please <a href='/login'>Log In</a> or <a href='/register'>Register</a>
-            {% endif %} 
+
             <nav class='nav'>
-                <a href="/view">View Interactions</a></br>
-                <a href="/script">Manage Payloads</a></br>
+                <a href="/view">
+                    <div class='nav-element'>
+                        <span class="material-symbols-outlined">visibility</span>
+                        View Interactions
+                    </div>
+                </a>
+
+                <a href="/script">
+                    <div class='nav-element'>
+                        <span class="material-symbols-outlined">manage_search</span>
+                        Manage Payloads
+                    </div>
+                </a>
+
+
                 {% if session['name'] %}
-                <a href="/logout">Log Out</a>
+                    <a href="/logout">
+                        <div class='nav-element'>
+                            <span class="material-symbols-outlined">logout</span>
+                            Log Out
+                        </div>
+                    </a>
                 {% else %}
-                <a href="/register">Register</a></br>
+                <a href="/register">
+                    <div class='nav-element'>
+                        <span class="material-symbols-outlined">login</span>
+                        Register
+                    </div>
+                </a>
                 {% endif %}
+
+
+
             </nav>
         </p>
         </div>

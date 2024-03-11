@@ -64,7 +64,7 @@ def register():
                 ),
                 1,
                 generate_password_hash(
-                    form_data["password"], method="pbkdf2", salt_length=12
+                    form_data["password"], method="sha512", salt_length=12
                 ),
             ),
         )

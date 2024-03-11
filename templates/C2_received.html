@@ -1,3 +1,7 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/received.css') }}">
+</head>
+
 {% extends 'template.html' %}
 
 
@@ -11,16 +15,24 @@
         <p>Below is all the data this C2 Server has collected this session.</br>
         GET /collect/{{ session['identifier'] }}?[data]</p>
         <form style="padding: -7px;" method="POST" action="/clear">
-            <button type="submit">Clear Data</button>
-            <button onclick="window.location='/view'" type="button">Refresh</button>
+            <div class='button-container' style="display:flex;">
+                <button style="display: flex;align-items: center; margin-right: 50%;" class="primary-button" onclick="return confirm('Are you sure you want to clear data?')" type="submit">
+                    <span class="material-symbols-outlined">clear</span>
+                    Clear Data
+                </button>
+                <button style="display: flex;align-items: center;" class="primary-button" onclick="window.location='/view'" type="button">
+                    <span class="material-symbols-outlined">refresh</span>
+                    Refresh
+                </button>
+            </div>
         </form>
         </br></br>
         <table style="width: 100%;">
-            <tr>
-                <td style="text-decoration: underline;">Date</td>
-                <td style="text-decoration: underline;">Remote IP</td>
-                <td style="text-decoration: underline;">Method</td>
-                <td style="text-decoration: underline;">Data</td>
+            <tr class='header'>
+                <td >Date</td>
+                <td >Remote IP</td>
+                <td >Method</td>
+                <td >Data</td>
             </tr>
         {%for i in content%}
             <tr>

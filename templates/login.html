@@ -1,9 +1,12 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/login.css') }}">
+</head>
 {% extends 'template.html' %}
 
 
 {% block content %}
 
-    <h1 class='title'>
+    <h1>
         {% block title %} 
             Login
         {% endblock %}
@@ -16,8 +19,10 @@
         {% endif %} 
     </p>
     <form method="POST" action="/login">
-        <input placeholder="Username" name="username"/></br>
-        <input placeholder="Password" name="password" type="password"/></br>
-        <input type="submit" value="Log In" />
+        <label for="username" >Username</label><br>
+        <input name="username" class="login-input"/></br>
+        <label for="password">Password</label><br>
+        <input  name="password" type="password" class="login-input"/></br>
+        <input type="submit" value="Log In" class='login-button'/>
     </form>
 {% endblock %}
