@@ -47,12 +47,42 @@ body {
 .sidebar {
   position: fixed;
   top: 0;
-  left: 5px;
+  left: 0px;
   height: 100%;
   width: 250px;
   background-color: #222831;
   padding:20px;
   border-right: 1px solid #EEEEEE;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  padding: 10px;
+}
+
+.sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 768px) {
+  .sidebar {
+      width: 45px;
+  }
+
+  .sidebar ul li {
+      text-align: center;
+  }
+
+  .nav-text{
+      display: none;
+  }
+
 }
 
 a {
@@ -63,6 +93,7 @@ a {
 a:hover {
   color: #8cc8cb;
 }
+
 .main {
   font-size: 16px;
   letter-spacing: 1.6px;
