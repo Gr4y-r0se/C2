@@ -35,8 +35,6 @@ body {
   vertical-align: middle;
 }
 
-
-
 .content {
   background-color: rgb(38 38 38);
   padding: 10px;
@@ -70,6 +68,14 @@ body {
   text-decoration: none;
 }
 
+.main {
+  font-size: 16px;
+  letter-spacing: 1.6px;
+  word-spacing: 1px;
+  color: #ffffff;
+  margin-left: 300px;
+}
+
 @media screen and (max-width: 768px) {
   .sidebar {
       width: 45px;
@@ -83,6 +89,10 @@ body {
       display: none;
   }
 
+  .main {
+    margin-left: 95px;
+  }
+
 }
 
 a {
@@ -94,12 +104,7 @@ a:hover {
   color: #8cc8cb;
 }
 
-.main {
-  font-size: 16px;
-  letter-spacing: 1.6px;
-  word-spacing: 1px;
-  color: #ffffff;
-}
+
 
 .primary-button {
   margin:0;
