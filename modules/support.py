@@ -86,7 +86,7 @@ def setup():
             ),
             0,
             generate_password_hash(
-                admin_password, method="pbkdf2", salt_length=12
+                admin_password, method="sha512", salt_length=12
             ),
         ),
     )

@@ -2,6 +2,8 @@ from __main__ import app
 from flask import (
     render_template,
     session,
+    redirect,
+    url_for
 )
 
 
@@ -11,4 +13,5 @@ def index():
         name = session["name"]
     else:
         name = ""
+        return redirect(url_for("login"))
     return render_template("index.html", name=name)
