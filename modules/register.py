@@ -69,7 +69,7 @@ def register():
             ),
         )
         cursor.execute(
-            """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?);""",
+            """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
             (
                 str(uuid4()),
                 "alert 1",

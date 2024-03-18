@@ -14,11 +14,11 @@
 }
 
 .login-input:hover{
-    background-color: #31363F;
+    background-color: #222222;
 }
 
 .login-input:focus{
-    background-color: #31363F;
+    background-color: #222222;
 }
 
 .login-button {

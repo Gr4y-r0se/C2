@@ -99,7 +99,10 @@ a:hover {
   font-size: 15px;
 }
 .primary-text-input-small:hover {
-  background-color: #31363F;
+  background-color: #222222;
+}
+.primary-text-input-small:focus {
+  background-color: #222222;
 }
 
 .primary-text-input-large {
@@ -112,9 +115,12 @@ a:hover {
   color: white;
 }
 .primary-text-input-large:hover {
-  background-color: #31363F;
+  background-color: #222222;
 }
 
+.primary-text-input-large:focus {
+  background-color: #222222;
+}
 .primary-dropdown{
   background-color: transparent;
   border-radius: 0;

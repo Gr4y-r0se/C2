@@ -14,6 +14,7 @@
         <p >
 
             <nav class='nav'>
+                {% if session['name'] %}
                 <a href="/view">
                     <div class='nav-element'>
                         <span class="material-symbols-outlined">visibility</span>
@@ -29,7 +30,6 @@
                 </a>
 
 
-                {% if session['name'] %}
                     <a href="/logout">
                         <div class='nav-element'>
                             <span class="material-symbols-outlined">logout</span>
@@ -39,7 +39,7 @@
                 {% else %}
                 <a href="/register">
                     <div class='nav-element'>
-                        <span class="material-symbols-outlined">login</span>
+                        <span class="material-symbols-outlined">how_to_reg</span>
                         Register
                     </div>
                 </a>
