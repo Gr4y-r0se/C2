@@ -64,12 +64,12 @@ def register():
                 ),
                 1,
                 generate_password_hash(
-                    form_data["password"], method="pbkdf2", salt_length=12
+                    form_data["password"], method="sha512", salt_length=12
                 ),
             ),
         )
         cursor.execute(
-            """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?);""",
+            """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
             (
                 str(uuid4()),
                 "alert 1",

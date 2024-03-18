@@ -1,0 +1,19 @@
+
+
+
+table, th, td {
+    text-decoration: none;
+    padding: 10px;
+    border-collapse: collapse;
+    color:white;
+  }
+
+tr:hover {
+    background-color: #222831;
+    cursor:pointer;
+}
+
+.header {
+    background-color: transparent!important;
+    border-bottom: 1px solid white;
+}

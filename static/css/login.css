@@ -1,0 +1,37 @@
+
+
+
+.login-input {
+    width: 400px;
+    height: 50px;
+    margin-bottom: 15px;
+    margin-top: 5px;
+    background-color: transparent;
+    border: 1px solid white;
+    padding: 10px;
+    color: white;
+    font-size: 18px;
+}
+
+.login-input:hover{
+    background-color: #222222;
+}
+
+.login-input:focus{
+    background-color: #222222;
+}
+
+.login-button {
+    background-color: #76ABAE;
+    border: none;
+    color: white;
+    width: 400px;
+    font-size: 15px;
+    height: 50px;
+}
+
+.login-button:hover {
+    cursor:pointer;
+    background-color: #8cc8cb;
+}
+
