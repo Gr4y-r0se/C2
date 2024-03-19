@@ -21,7 +21,7 @@ def check_auth(f):
                 """SELECT username,time FROM cookies WHERE cookie = ?""", (cookie,)
             ).fetchall()[0]
             
-            if (time() - timestamp) > 600:
+            if (time() - timestamp) > 7200:
                 cursor.execute("""DELETE FROM cookies WHERE cookie = ?""", (cookie,))
                 raise ValueError
         except Exception as e:
