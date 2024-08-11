@@ -23,6 +23,8 @@ def logout():
     resp = make_response()
     resp.set_cookie("auth_cookie", "", secure=True, httponly=True, samesite="Strict")
     resp.set_cookie("session", "", secure=True, httponly=True, samesite="Strict")
+    connection.commit()
+    connection.close()
     resp.status = "302"
     resp.headers["Location"] = "/"
     return resp

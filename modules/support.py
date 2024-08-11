@@ -1,6 +1,6 @@
 from __main__ import app
 import sqlite3
-import os
+from os import listdir, path, remove
 from flask import request, make_response
 from time import time
 from uuid import uuid4
@@ -38,8 +38,8 @@ def check_auth(f):
 
 
 def setup():
-    if os.path.exists("db/c2.db"):
-        os.remove("db/c2.db")
+    if path.exists("db/c2.db"):
+        remove("db/c2.db")
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
     cursor.execute(
@@ -87,26 +87,23 @@ def setup():
             generate_password_hash(admin_password, method="sha512", salt_length=12),
         ),
     )
-    cursor.execute(
-        """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
-        (
-            str(uuid4()),
-            "alert 1",
-            "admin",
-            1,
-            "alert(1);",
-        ),
-    )
-    cursor.execute(
-        """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
-        (
-            str(uuid4()),
-            "alert cookies",
-            "admin",
-            0,
-            "alert(document.cookie);",
-        ),
-    )
+    for filename in listdir("scripts/"):
+        if filename.endswith(".js"):
+            filepath = path.join("./scripts/", filename)
+            with open(filepath, "r") as file:
+                javascript = file.read()
+                title = filename.replace("_", " ").replace(".js", "")
+
+                cursor.execute(
+                    """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
+                    (
+                        str(uuid4()),
+                        title,
+                        admin_id,
+                        0,
+                        javascript,
+                    ),
+                )
 
     connection.commit()
     connection.close()

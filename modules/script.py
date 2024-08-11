@@ -21,7 +21,7 @@ def serve(id):
     cursor = connection.cursor()
     try:
         owner = cursor.execute(
-            """SELECT username FROM users WHERE identifier = ?""", (id,)
+            """SELECT uuid FROM users WHERE identifier = ?""", (id,)
         ).fetchall()[0][0]
     except IndexError:
         resp.status = "500"
@@ -33,7 +33,7 @@ def serve(id):
         """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ? ,?);""",
         (
             str(uuid4()),
-            str(datetime.utcfromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
+            str(datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
             str(request.remote_addr),
             "GET",
             "Fetched script titled '%s'" % script_name,
@@ -54,19 +54,22 @@ def serve(id):
 def save_script():
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
+    owner = cursor.execute(
+        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+    ).fetchall()[0][0]
     if request.method == "GET":
         key = request.args.get("name", default="", type=str)
 
         if key != "":
             cursor.execute(
-                """UPDATE scripts SET active = 0 WHERE owner = ?;""", (session["name"],)
+                """UPDATE scripts SET active = 0 WHERE owner = ?;""", (owner,)
             )
             cursor.execute(
                 """UPDATE scripts SET active = ? WHERE name = ? AND owner = ?;""",
                 (
                     1,
                     key,
-                    session["name"],
+                    owner,
                 ),
             )
             connection.commit()
@@ -77,13 +80,13 @@ def save_script():
     elif request.method == "POST":
         form_data = request.form
         try:
-            uuid, name, active, script = cursor.execute(
+            uuid = cursor.execute(
                 "SELECT uuid, name, active, script FROM scripts WHERE name = ? AND owner = ?;",
                 (
                     form_data["name"],
-                    session["name"],
+                    owner,
                 ),
-            ).fetchall()[0]
+            ).fetchall()[0][0]
             cursor.execute(
                 """UPDATE scripts SET active = 1, script = ? WHERE uuid = ?;""",
                 (
@@ -93,7 +96,7 @@ def save_script():
             )
         except:
             cursor.execute(
-                """UPDATE scripts SET active = 0 WHERE owner = ?;""", (session["name"],)
+                """UPDATE scripts SET active = 0 WHERE owner = ?;""", (owner,)
             )
             cursor.execute(
                 """INSERT INTO scripts (uuid, name, active, script, owner) VALUES (?, ?, ?, ?, ?);""",
@@ -102,12 +105,12 @@ def save_script():
                     form_data["name"],
                     1,
                     form_data["the_script"],
-                    session["name"],
+                    owner,
                 ),
             )
     connection.commit()
     scripts = cursor.execute(
-        """SELECT name,script FROM scripts WHERE owner = ?;""", (session["name"],)
+        """SELECT name,script FROM scripts WHERE owner = ?;""", (owner,)
     ).fetchall()
     scripts.reverse()
     connection.close()
