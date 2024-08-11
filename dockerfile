@@ -13,5 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Make port 443 available to the world outside this container
 EXPOSE 443
 
+# Define environment variable
+ENV C2_APP=app.py
+
 # Run app.py when the container launches
 CMD ["python3", "app.py"]

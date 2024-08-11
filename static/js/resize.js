@@ -7,8 +7,12 @@ function changeText() {
 
     if (screenWidth < 769) {
         textElement.innerHTML = "C2";
+        //nav_image.height = 40;
+        //nav_image.width = 44; 
     } else {
         textElement.innerHTML = "Connect and Control";
+        //nav_image.height = 200;
+        //nav_image.width = 220; 
     }
 }
     

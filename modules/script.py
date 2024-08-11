@@ -4,12 +4,7 @@ from datetime import datetime
 from time import time
 
 from __main__ import app
-from flask import (
-    make_response,
-    render_template,
-    request,
-    session,
-)
+from flask import make_response, render_template, request, session, jsonify
 
 from .support import check_auth
 
@@ -49,7 +44,50 @@ def serve(id):
     return resp
 
 
-@app.route("/script", methods=["GET", "POST"])
+@app.route("/script/data", methods=["GET"])
+@check_auth
+def serve_script_content():
+    connection = sqlite3.connect("db/c2.db")
+    cursor = connection.cursor()
+    id = request.args.get("id", default="", type=str)
+
+    script_values = cursor.execute(
+        """SELECT name,script FROM scripts WHERE uuid = ?;""",
+        (id,),
+    ).fetchall()[0]
+
+    connection.commit()
+    connection.close()
+
+    data = {"script_name": script_values[0], "script": script_values[1]}
+    return jsonify(data)
+
+
+@app.route("/script/active", methods=["GET"])
+@check_auth
+def set_script_active():
+    connection = sqlite3.connect("db/c2.db")
+    cursor = connection.cursor()
+    id = request.args.get("id", default="", type=str)
+    owner = cursor.execute(
+        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+    ).fetchall()[0][0]
+    cursor.execute(
+        """UPDATE scripts SET active = 0 WHERE owner = ?;""",
+        (owner,),
+    )
+    cursor.execute(
+        """UPDATE scripts SET active = 1 WHERE uuid = ?;""",
+        (id,),
+    )
+
+    data = {"response_text": "Activated!", "colour": "#089305"}
+    connection.commit()
+    connection.close()
+    return jsonify(data)
+
+
+@app.route("/script/save", methods=["POST"])
 @check_auth
 def save_script():
     connection = sqlite3.connect("db/c2.db")
@@ -57,61 +95,53 @@ def save_script():
     owner = cursor.execute(
         """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
     ).fetchall()[0][0]
-    if request.method == "GET":
-        key = request.args.get("name", default="", type=str)
 
-        if key != "":
-            cursor.execute(
-                """UPDATE scripts SET active = 0 WHERE owner = ?;""", (owner,)
-            )
-            cursor.execute(
-                """UPDATE scripts SET active = ? WHERE name = ? AND owner = ?;""",
-                (
-                    1,
-                    key,
-                    owner,
-                ),
-            )
-            connection.commit()
-            connection.close()
-            resp = make_response()
-            resp.status = "200"
-            return resp
-    elif request.method == "POST":
-        form_data = request.form
-        try:
-            uuid = cursor.execute(
-                "SELECT uuid, name, active, script FROM scripts WHERE name = ? AND owner = ?;",
-                (
-                    form_data["name"],
-                    owner,
-                ),
-            ).fetchall()[0][0]
-            cursor.execute(
-                """UPDATE scripts SET active = 1, script = ? WHERE uuid = ?;""",
-                (
-                    form_data["the_script"],
-                    uuid,
-                ),
-            )
-        except:
-            cursor.execute(
-                """UPDATE scripts SET active = 0 WHERE owner = ?;""", (owner,)
-            )
-            cursor.execute(
-                """INSERT INTO scripts (uuid, name, active, script, owner) VALUES (?, ?, ?, ?, ?);""",
-                (
-                    str(uuid4()),
-                    form_data["name"],
-                    1,
-                    form_data["the_script"],
-                    owner,
-                ),
-            )
+    form_data = request.form
+    try:
+        uuid = cursor.execute(
+            "SELECT uuid FROM scripts WHERE name = ? AND owner = ?;",
+            (
+                form_data["name"],
+                owner,
+            ),
+        ).fetchall()[0][0]
+        cursor.execute(
+            """UPDATE scripts SET script = ? WHERE uuid = ?;""",
+            (
+                form_data["the_script"],
+                uuid,
+            ),
+        )
+    except:
+        cursor.execute(
+            """INSERT INTO scripts (uuid, name, active, script, owner) VALUES (?, ?, ?, ?, ?);""",
+            (
+                str(uuid4()),
+                form_data["name"],
+                0,
+                form_data["the_script"],
+                owner,
+            ),
+        )
+    data = {"response_text": "Saved!", "colour": "#089305"}
     connection.commit()
+    connection.close()
+    return jsonify(data)
+
+
+@app.route("/script", methods=["GET"])
+@check_auth
+def script():
+    connection = sqlite3.connect("db/c2.db")
+    cursor = connection.cursor()
+    owner = cursor.execute(
+        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+    ).fetchall()[0][0]
+
     scripts = cursor.execute(
-        """SELECT name,script FROM scripts WHERE owner = ?;""", (owner,)
+        """SELECT name,uuid FROM scripts WHERE owner = ? ORDER BY active;""", (owner,)
     ).fetchall()
     scripts.reverse()
     connection.close()
-    return render_template("script_edit.html", content=scripts)
+    host_header = request.headers.get("Host")
+    return render_template("script_edit.html", content=scripts, host=host_header)

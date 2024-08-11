@@ -1,7 +1,7 @@
 from __main__ import app
 import sqlite3
 from os import listdir, path, remove
-from flask import request, make_response
+from flask import request, make_response, session
 from time import time
 from uuid import uuid4
 from werkzeug.security import generate_password_hash
@@ -17,6 +17,7 @@ def check_auth(f):
         connection = sqlite3.connect("db/c2.db")
         cursor = connection.cursor()
         try:
+            name = session["name"]
             name, timestamp = cursor.execute(
                 """SELECT username,time FROM cookies WHERE cookie = ?""", (cookie,)
             ).fetchall()[0]
