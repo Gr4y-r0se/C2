@@ -1,9 +1,9 @@
-import os
 import random
 import sqlite3
 import string
 from datetime import datetime
 from time import time
+from os import listdir, path
 from uuid import uuid4
 
 from __main__ import app
@@ -24,7 +24,7 @@ def register():
         connection = sqlite3.connect("db/c2.db")
         cursor = connection.cursor()
         try:
-            name = cursor.execute(
+            cursor.execute(
                 "SELECT username FROM users WHERE username = ?",
                 (form_data["username"],),
             ).fetchall()[0]
@@ -68,26 +68,23 @@ def register():
                 ),
             ),
         )
-        cursor.execute(
-            """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
-            (
-                str(uuid4()),
-                "alert 1",
-                user_id,
-                1,
-                "alert(1);",
-            ),
-        )
-        cursor.execute(
-            """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
-            (
-                str(uuid4()),
-                "alert cookies",
-                user_id,
-                0,
-                "alert(document.cookie);",
-            ),
-        )
+        for filename in listdir("scripts/"):
+            if filename.endswith(".js"):
+                filepath = path.join("./scripts/", filename)
+                with open(filepath, "r") as file:
+                    javascript = file.read()
+                    title = filename.replace("_", " ")
+
+                    cursor.execute(
+                        """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
+                        (
+                            str(uuid4()),
+                            title,
+                            user_id,
+                            0,
+                            javascript,
+                        ),
+                    )
 
         connection.commit()
         connection.close()

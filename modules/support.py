@@ -1,7 +1,7 @@
 from __main__ import app
 import sqlite3
-import os
-from flask import request, make_response
+from os import listdir, path, remove
+from flask import request, make_response, session
 from time import time
 from uuid import uuid4
 from werkzeug.security import generate_password_hash
@@ -17,15 +17,15 @@ def check_auth(f):
         connection = sqlite3.connect("db/c2.db")
         cursor = connection.cursor()
         try:
+            name = session["name"]
             name, timestamp = cursor.execute(
                 """SELECT username,time FROM cookies WHERE cookie = ?""", (cookie,)
             ).fetchall()[0]
-            
+
             if (time() - timestamp) > 7200:
                 cursor.execute("""DELETE FROM cookies WHERE cookie = ?""", (cookie,))
                 raise ValueError
         except Exception as e:
-
             resp.status = "302"
             resp.headers["Location"] = "/login"
             connection.commit()
@@ -39,8 +39,8 @@ def check_auth(f):
 
 
 def setup():
-    if os.path.exists("db/c2.db"):
-        os.remove("db/c2.db")
+    if path.exists("db/c2.db"):
+        remove("db/c2.db")
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
     cursor.execute(
@@ -85,31 +85,26 @@ def setup():
                 random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
             ),
             0,
-            generate_password_hash(
-                admin_password, method="sha512", salt_length=12
-            ),
+            generate_password_hash(admin_password, method="sha512", salt_length=12),
         ),
     )
-    cursor.execute(
-        """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
-        (
-            str(uuid4()),
-            "alert 1",
-            "admin",
-            1,
-            "alert(1);",
-        ),
-    )
-    cursor.execute(
-        """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
-        (
-            str(uuid4()),
-            "alert cookies",
-            "admin",
-            0,
-            "alert(document.cookie);",
-        ),
-    )
+    for filename in listdir("scripts/"):
+        if filename.endswith(".js"):
+            filepath = path.join("./scripts/", filename)
+            with open(filepath, "r") as file:
+                javascript = file.read()
+                title = filename.replace("_", " ").replace(".js", "")
+
+                cursor.execute(
+                    """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
+                    (
+                        str(uuid4()),
+                        title,
+                        admin_id,
+                        0,
+                        javascript,
+                    ),
+                )
 
     connection.commit()
     connection.close()

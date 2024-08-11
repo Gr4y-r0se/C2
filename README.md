@@ -8,12 +8,7 @@ There are two core peices of functionality: **Manage Payloads** and **Monitor In
 </br></br>
 <img width="464" alt="Welcome" src="https://github.com/Gr4y-r0se/C2/assets/59868499/cf3d57e4-2c13-40ea-bf2d-640ce176a440">
 
-But first, simply set up the app (if it's the first time, make a note of the admin password):
-```bash
-python3 app.py
-```
 
-Then browse to `https://localhost/` to get cracking!
 
 ### Manage Payloads
 
@@ -35,16 +30,40 @@ It looks a little like so:</br></br>
 
 ## Installation
 
+#### First...
 Clone this repository:
 
 ```bash
 git clone https://github.com/Gr4y-r0se/C2.git
 ```
 
+#### Bare Metal 
+
 Then install the requirements:
 ```bash
 pip3 install -r requirements.txt
 ```
+
+```bash
+python3 app.py
+```
+
+#### Docker 
+
+```bash
+docker build -t c2-app .
+docker run -p 443:443 c2-app
+```
+
+#### Docker Compose 
+
+```bash
+docker-compose up --build
+```
+
+#### ...Finally
+
+Then browse to `https://localhost/` to get cracking!
 
 ## Contributing
 
@@ -52,7 +71,6 @@ Pull requests are welcome - especially if you want to redesign the UI (it's pret
 If you're not yet able to write the update you want to see, that's okay - just open an issue!
 
 Please, for major changes, open an issue first to discuss what you would like to change.
-(Nnless it's the UI. I am not a graphic designer, and it's sure not my passion. Please help.)
 
 ## License
 
@@ -60,6 +78,13 @@ This is released under the [MIT](https://choosealicense.com/licenses/mit/) licen
 
 ## Roadmap
 
+### To Do
  - Add other content types (XML etc) for serving
+ - Support templating for JS (so you can dynamically load files)
+ - Support serving files through JS objects
+ - Add JS obfuscation so scripts are randomised every time they are served
+
+
+### Completed
+ - Make the UI better (please open a pull request if you're good at this). (Special thanks to [BDragisic](https://github.com/BDragisic) for this one.)
  - Migrate scripts to their own folder, and dynamically inject them into each user account.
- - Make the UI better (please open a pull request if you're good at this)

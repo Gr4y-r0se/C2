@@ -1,10 +1,5 @@
 from __main__ import app
-from flask import (
-    render_template,
-    session,
-    redirect,
-    url_for
-)
+from flask import render_template, session, redirect, url_for
 
 
 @app.route("/", methods=["GET"])

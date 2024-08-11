@@ -1,0 +1,42 @@
+<head>
+</head>
+
+{% extends 'template.html' %}
+
+
+{% block content %}
+
+    <h1 class='title'>
+        {% block title %} 
+            Control
+        {% endblock %}
+    </h1>
+        <p>If you've used any of the Control payloads, the results will appear below.</br></br>
+        if You have multiple, you can load which one you want here: <select id="presaved" class='primary-dropdown'  name="presaved" onchange="populate(this);">
+            <option value="">--New--</option>
+            {%for i in content%}
+                <option value="{{i[1]}}">{{i[0]}}</option>
+            {%endfor%}
+        </select>
+        </p>
+        <iframe src="" id="control_data_frame">
+        </iframe>
+        </br></br>
+    
+    <script>
+        function populate(sel) {
+            document.getElementById('activate_button').innerHTML = 'Set as Active';
+            var script = sel.value;
+            var script_name = sel.options[sel.selectedIndex].text;
+            document.getElementById('the_script').innerHTML = script;
+            document.getElementById('scriptname').value = script_name;
+            return true;
+        };
+        async function set_script_as_active() {
+            fetch('/script?name='.concat(encodeURI(document.getElementById('scriptname').value)));
+            document.getElementById('activate_button').innerHTML = 'Activated!';
+            return true;
+        };
+    </script>
+
+{% endblock %}

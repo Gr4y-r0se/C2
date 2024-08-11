@@ -5,13 +5,7 @@ from time import time
 from uuid import uuid4
 
 from __main__ import app
-from flask import (
-    make_response,
-    render_template,
-    request,
-    session,
-    url_for
-)
+from flask import make_response, render_template, request, session, url_for
 from werkzeug.security import check_password_hash
 
 from .support import check_auth
@@ -29,6 +23,8 @@ def logout():
     resp = make_response()
     resp.set_cookie("auth_cookie", "", secure=True, httponly=True, samesite="Strict")
     resp.set_cookie("session", "", secure=True, httponly=True, samesite="Strict")
+    connection.commit()
+    connection.close()
     resp.status = "302"
     resp.headers["Location"] = "/"
     return resp
