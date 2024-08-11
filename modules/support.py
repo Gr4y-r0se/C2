@@ -17,7 +17,6 @@ def check_auth(f):
         connection = sqlite3.connect("db/c2.db")
         cursor = connection.cursor()
         try:
-            name = session["name"]
             name, timestamp = cursor.execute(
                 """SELECT username,time FROM cookies WHERE cookie = ?""", (cookie,)
             ).fetchall()[0]
