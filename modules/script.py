@@ -26,23 +26,23 @@ def serve(id):
     except IndexError:
         resp.status = "500"
         return resp
-    script,script_name = cursor.execute(
+    script, script_name = cursor.execute(
         """SELECT script,name FROM scripts WHERE active = 1 AND owner = ?;""", (owner,)
     ).fetchall()[0]
     cursor.execute(
-            """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ? ,?);""",
-            (
-                str(uuid4()),
-                str(datetime.utcfromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
-                str(request.remote_addr),
-                "GET",
-                "Fetched script titled '%s'"%script_name,
-                owner,
-            ),
-        ) #Log this in 'interactions' 
+        """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ? ,?);""",
+        (
+            str(uuid4()),
+            str(datetime.utcfromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
+            str(request.remote_addr),
+            "GET",
+            "Fetched script titled '%s'" % script_name,
+            owner,
+        ),
+    )  # Log this in 'interactions'
     connection.commit()
     connection.close()
-    resp.access_control_allow_origin = '*'
+    resp.access_control_allow_origin = "*"
     resp.status = "200"
     resp.mimetype = "text/javascript"
     resp.data = script

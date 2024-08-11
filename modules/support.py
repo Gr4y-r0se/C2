@@ -20,12 +20,11 @@ def check_auth(f):
             name, timestamp = cursor.execute(
                 """SELECT username,time FROM cookies WHERE cookie = ?""", (cookie,)
             ).fetchall()[0]
-            
+
             if (time() - timestamp) > 7200:
                 cursor.execute("""DELETE FROM cookies WHERE cookie = ?""", (cookie,))
                 raise ValueError
         except Exception as e:
-
             resp.status = "302"
             resp.headers["Location"] = "/login"
             connection.commit()
@@ -85,9 +84,7 @@ def setup():
                 random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
             ),
             0,
-            generate_password_hash(
-                admin_password, method="sha512", salt_length=12
-            ),
+            generate_password_hash(admin_password, method="sha512", salt_length=12),
         ),
     )
     cursor.execute(

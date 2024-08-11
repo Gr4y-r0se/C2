@@ -31,7 +31,7 @@ def collect(id):
             """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ? ,?);""",
             (
                 str(uuid4()),
-                str(datetime.utcfromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
+                str(datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
                 str(request.remote_addr),
                 "GET",
                 "&".join(
@@ -44,19 +44,20 @@ def collect(id):
         )
 
     elif request.method == "POST":
-        
-        match request.headers.get('content-type'): #Add other content-types to this as needed
-            case 'application/json':
+        match request.headers.get(
+            "content-type"
+        ):  # Add other content-types to this as needed
+            case "application/json":
                 data = loads(request.json)
                 data = str("".join("%s: %s" % (k, data[k]) for k in data))
             case _:
                 data = request.data
-            
+
         cursor.execute(
             """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ?, ?);""",
             (
                 str(uuid4()),
-                str(datetime.utcfromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
+                str(datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
                 str(request.remote_addr),
                 "POST",
                 data,

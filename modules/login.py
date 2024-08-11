@@ -5,13 +5,7 @@ from time import time
 from uuid import uuid4
 
 from __main__ import app
-from flask import (
-    make_response,
-    render_template,
-    request,
-    session,
-    url_for
-)
+from flask import make_response, render_template, request, session, url_for
 from werkzeug.security import check_password_hash
 
 from .support import check_auth

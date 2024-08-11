@@ -20,10 +20,10 @@
         </select>
     </p>
         <form method="POST" action="/script">
-            <label for="scriptname" style="margin-botton:10px">Script Name:</label><br>
+            <label for="scriptname" style="margin-bottom:10px;">Script Name:</label><br>
             <input class="primary-text-input-small" id="scriptname" placeholder="Script Name" name="name" value=""/>
             </br></br>
-            <label for="the_script" style="margin-botton:10px">Script:</label><br>
+            <label for="the_script" style="margin-bottom:10px;">Script:</label><br>
             <textarea class="primary-text-input-large" onchange="document.getElementById('activate_button').innerHTML = 'Set as Active';" id="the_script" name="the_script" rows="5" cols="70" autofocus></textarea></br>
             <button class='primary-button' type="button" id="activate_button" onclick="set_script_as_active()">Set as Active</button>
             <input class="primary-button" type="submit" value="Save"/>
@@ -40,7 +40,7 @@
             return true;
         };
         async function set_script_as_active() {
-            fetch('/script?name='.concat(document.getElementById('scriptname').value));
+            fetch('/script?name='.concat(encodeURI(document.getElementById('scriptname').value)));
             document.getElementById('activate_button').innerHTML = 'Activated!';
             return true;
         };
