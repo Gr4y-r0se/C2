@@ -78,8 +78,13 @@ This is released under the [MIT](https://choosealicense.com/licenses/mit/) licen
 
 ## Roadmap
 
+### To Do
  - Add other content types (XML etc) for serving
- - Migrate scripts to their own folder, and dynamically inject them into each user account.
+ - Support templating for JS (so you can dynamically load files)
+ - Support serving files through JS objects
+ - Add JS obfuscation so scripts are randomised every time they are served
 
-## Completed
- - Make the UI better (please open a pull request if you're good at this). Special thanks to [BDragisic](https://github.com/BDragisic) for this one.
+
+### Completed
+ - Make the UI better (please open a pull request if you're good at this). (Special thanks to [BDragisic](https://github.com/BDragisic) for this one.)
+ - Migrate scripts to their own folder, and dynamically inject them into each user account.
