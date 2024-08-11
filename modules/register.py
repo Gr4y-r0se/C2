@@ -68,6 +68,8 @@ def register():
                 ),
             ),
         )
+
+        #Refactor this to read scripts from /scripts
         cursor.execute(
             """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
             (

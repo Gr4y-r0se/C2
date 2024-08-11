@@ -52,7 +52,6 @@ Pull requests are welcome - especially if you want to redesign the UI (it's pret
 If you're not yet able to write the update you want to see, that's okay - just open an issue!
 
 Please, for major changes, open an issue first to discuss what you would like to change.
-(Nnless it's the UI. I am not a graphic designer, and it's sure not my passion. Please help.)
 
 ## License
 
@@ -62,4 +61,6 @@ This is released under the [MIT](https://choosealicense.com/licenses/mit/) licen
 
  - Add other content types (XML etc) for serving
  - Migrate scripts to their own folder, and dynamically inject them into each user account.
- - Make the UI better (please open a pull request if you're good at this)
+
+## Completed
+ - Make the UI better (please open a pull request if you're good at this). Special thanks to [BDragisic](https://github.com/BDragisic) for this one.
