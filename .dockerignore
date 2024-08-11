@@ -1,0 +1,9 @@
+# Ignore all Python-related files and directories
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+
+
+# Ignore SQLite and other database files
+**/*.db
