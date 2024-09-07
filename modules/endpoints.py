@@ -52,37 +52,36 @@ def serve_script_content():
     id = request.args.get("id", default="", type=str)
 
     script_values = cursor.execute(
-        """SELECT name,description,script FROM scripts WHERE uuid = ?;""",
+        """SELECT name,script FROM scripts WHERE uuid = ?;""",
         (id,),
     ).fetchall()[0]
 
     connection.commit()
     connection.close()
 
-    data = {"script_name": script_values[0], "script_description": script_values[1], "script": script_values[2]}
+    data = {"script_name": script_values[0], "script": script_values[1]}
     return jsonify(data)
 
 
-@app.route("/script/publish", methods=["GET"])
+@app.route("/script/active", methods=["GET"])
 @check_auth
 def set_script_active():
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
     id = request.args.get("id", default="", type=str)
-    
-    script_value = cursor.execute(
-        """SELECT name,description,script FROM scripts WHERE uuid = ?;""",
+    owner = cursor.execute(
+        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+    ).fetchall()[0][0]
+    cursor.execute(
+        """UPDATE scripts SET active = 0 WHERE owner = ?;""",
+        (owner,),
+    )
+    cursor.execute(
+        """UPDATE scripts SET active = 1 WHERE uuid = ?;""",
         (id,),
-    ).fetchall()[0]
+    )
 
-    content = '''%s\n\n------$$gr4y-r0se$$------\n\n%s\n\n------$$gr4y-r0se$$------\n\n%s'''%(script_value[0],script_value[3],script_value[2])
-    filename = "scripts/%s.txt"%(str(uuid4()))
-
-    with open(filename, 'w') as file:
-        file.write(content)
-
-
-    data = {"response_text": "Published!", "colour": "#089305"}
+    data = {"response_text": "Activated!", "colour": "#089305"}
     connection.commit()
     connection.close()
     return jsonify(data)
@@ -107,20 +106,19 @@ def save_script():
             ),
         ).fetchall()[0][0]
         cursor.execute(
-            """UPDATE scripts SET script = ?, description = ? WHERE uuid = ?;""",
+            """UPDATE scripts SET script = ? WHERE uuid = ?;""",
             (
                 form_data["the_script"],
-                form_data["description"],
                 uuid,
             ),
         )
     except:
         cursor.execute(
-            """INSERT INTO scripts (uuid, name, description, script, owner) VALUES (?, ?, ?, ?, ?);""",
+            """INSERT INTO scripts (uuid, name, active, script, owner) VALUES (?, ?, ?, ?, ?);""",
             (
                 str(uuid4()),
                 form_data["name"],
-                form_data["description"],
+                0,
                 form_data["the_script"],
                 owner,
             ),
@@ -131,7 +129,7 @@ def save_script():
     return jsonify(data)
 
 
-@app.route("/script", methods=["GET"])
+@app.route("/endpoints", methods=["GET"])
 @check_auth
 def script():
     connection = sqlite3.connect("db/c2.db")
@@ -141,7 +139,7 @@ def script():
     ).fetchall()[0][0]
 
     scripts = cursor.execute(
-        """SELECT name,uuid FROM scripts WHERE owner = ? ORDER BY id DESC;""", (owner,)
+        """SELECT name,uuid FROM scripts WHERE owner = ? ORDER BY active;""", (owner,)
     ).fetchall()
     scripts.reverse()
     connection.close()

@@ -20,14 +20,17 @@
         </select>
     </p>
         <form method="" action="">
-            <label for="scriptname" style="margin-bottom:10px;">Script Name:</label><br>
-            <input class="primary-text-input-small" id="scriptname" placeholder="Script Name" name="name" value=""/>
+            <label for="script_name" style="margin-bottom:10px;">Script Name:</label><br>
+            <input class="primary-text-input-small" id="script_name" placeholder="Script Name" name="name" value=""/>
             <input style="display: none;" id="uuid" name="uuid" value=""/>
             </br></br>
+            <label for="script_description" style="margin-bottom:10px;">Script Description:</label><br>
+            <input class="primary-text-input-small" id="script_description" placeholder="Script Description" name="description" value=""/>
+            </br></br>
             <label for="the_script" style="margin-bottom:10px;">Script:</label><br>
-            <textarea class="primary-text-input-large" onchange="document.getElementById('activate_button').innerHTML = 'Set as Active';" id="the_script" name="the_script" rows="5" cols="70" autofocus></textarea></br>
+            <textarea class="primary-text-input-large" onchange="document.getElementById('publish_button').innerHTML = 'Publish Script';" id="the_script" name="the_script" rows="5" cols="70" autofocus></textarea></br>
             <button class="primary-button" type="button" id="save_button" onclick="save_script()">Save</button>
-            <button class='primary-button' type="button" id="activate_button" onclick="set_script_as_active()">Set as Active</button>
+            <button class='primary-button' type="button" id="publish_button" onclick="publish_script_locally()">Publish Script</button>
         </form>
         </br></br>
     

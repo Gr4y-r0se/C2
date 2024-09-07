@@ -1,0 +1,50 @@
+<head>
+</head>
+
+{% extends 'template.html' %}
+
+{% block content %}
+
+    <h1 class='title'>
+        {% block title %} 
+            Endpoints Management
+        {% endblock %}
+    </h1>
+    
+    <p>Manage your API endpoints below. Requests to https://{{ host }}/endpoint will interact with the configured endpoints.</br></br>
+    You can also load a preconfigured endpoint here: 
+    <select id="preconfigured" class='primary-dropdown' name="preconfigured" onchange="populateEndpoint(this);">
+        {% for endpoint in endpoints %}
+            <option value="{{ endpoint['url'] }}">{{ endpoint['name'] }}</option>
+        {% endfor %}
+        <option value="">--New--</option>
+    </select>
+    </p>
+
+    <form method="" action="">
+        <label for="endpointname" style="margin-bottom:10px;">Endpoint Name:</label><br>
+        <input class="primary-text-input-small" id="endpointname" placeholder="Endpoint Name" name="name" value=""/>
+        <input style="display: none;" id="endpoint_id" name="endpoint_id" value=""/>
+        </br></br>
+
+        <label for="endpoint_url" style="margin-bottom:10px;">Endpoint URL:</label><br>
+        <input class="primary-text-input-large" id="endpoint_url" name="url" placeholder="/your-endpoint" value=""/>
+        </br></br>
+
+        <label for="endpoint_method" style="margin-bottom:10px;">HTTP Method:</label><br>
+        <select id="endpoint_method" name="method" class="primary-dropdown">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+            <option value="PUT">PUT</option>
+            <option value="DELETE">DELETE</option>
+        </select>
+        </br></br>
+
+        <button class="primary-button" type="button" id="save_button" onclick="saveEndpoint()">Save</button>
+        <button class='primary-button' type="button" id="activate_button" onclick="setEndpointAsActive()">Set as Active</button>
+    </form>
+    </br></br>
+    
+    <script src="{{ url_for('static', filename='js/endpoints.js') }}"></script>
+
+{% endblock %}

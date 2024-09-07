@@ -9,7 +9,8 @@ function populate(sel) {
     })
     .then(data => {
         document.getElementById('the_script').value = data.script;
-        document.getElementById('scriptname').value = data.script_name;
+        document.getElementById('script_name').value = data.script_name;
+        document.getElementById('script_description').value = data.script_description;
         document.getElementById('uuid').value = id;
     })
     .catch(error => {
@@ -18,8 +19,8 @@ function populate(sel) {
     
     return true;
 };
-async function set_script_as_active() {
-    await fetch('/script/active?id='.concat(document.getElementById('uuid').value)).then(response => {return response.json()}).then(data => {
+async function publish_script_locally() {
+    await fetch('/script/publish?id='.concat(document.getElementById('uuid').value)).then(response => {return response.json()}).then(data => {
             const button = document.getElementById('activate_button');
             const originalValue = button.innerHTML;
             button.innerHTML = data.response_text;
@@ -36,8 +37,9 @@ async function set_script_as_active() {
 };
 async function save_script() {
 
-    const scriptName = document.getElementById('scriptname').value;
+    const scriptName = document.getElementById('script_name').value;
     const uuid = document.getElementById('uuid').value;
+    const scriptDescription = document.getElementById('script_description').value;
     const scriptContent = document.getElementById('the_script').value;
 
     if (!scriptName || !scriptContent) {
@@ -47,6 +49,7 @@ async function save_script() {
     const formData = new FormData();
     formData.append('name', scriptName);
     formData.append('uuid', uuid);
+    formData.append('description', scriptDescription);
     formData.append('the_script', scriptContent);
 
 

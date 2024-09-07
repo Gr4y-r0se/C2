@@ -38,43 +38,78 @@ def check_auth(f):
 
 
 def setup():
+    # Remove the existing database if it exists
     if path.exists("db/c2.db"):
         remove("db/c2.db")
+
+    # Connect to the new database
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
+
+    # Create the 'data' table
     cursor.execute(
-        """CREATE TABLE data (uuid TEXT PRIMARY KEY,
-        time_stamp TEXT,
-        remote_ip TEXT,
-        method TEXT,
-        received TEXT,
-        owner TEXT NOT NULL)"""
+        """CREATE TABLE data (
+            uuid TEXT PRIMARY KEY,
+            time_stamp TEXT,
+            remote_ip TEXT,
+            method TEXT,
+            received TEXT,
+            owner TEXT NOT NULL
+        )"""
     )
+
+    # Create the 'scripts' table, removed the 'active' field
     cursor.execute(
-        """CREATE TABLE scripts (uuid TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
-        owner INT NOT NULL,
-        active INT NOT NULL,
-        script TEXT NOT NULL)"""
+        """CREATE TABLE scripts (
+            uuid TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            owner INT NOT NULL,
+            description TEXT,
+            script TEXT NOT NULL
+        )"""
     )
+
+    # Create the 'users' table
     cursor.execute(
-        """CREATE TABLE users (uuid TEXT PRIMARY KEY,
-        username TEXT NOT NULL,
-        permissions INT NOT NULL,
-        identifier TEXT NOT NULL,
-        password TEXT NOT NULL)"""
+        """CREATE TABLE users (
+            uuid TEXT PRIMARY KEY,
+            username TEXT NOT NULL,
+            permissions INT NOT NULL,
+            identifier TEXT NOT NULL,
+            password TEXT NOT NULL
+        )"""
     )
+
+    # Create the 'cookies' table
     cursor.execute(
-        """CREATE TABLE cookies (uuid TEXT PRIMARY KEY,
-        username TEXT,
-        cookie TEXT,
-        time INT)"""
+        """CREATE TABLE cookies (
+            uuid TEXT PRIMARY KEY,
+            username TEXT,
+            cookie TEXT,
+            time INT
+        )"""
     )
+
+    # Create the new 'endpoints' table
+    cursor.execute(
+        """CREATE TABLE endpoints (
+            uuid TEXT PRIMARY KEY,
+            id TEXT NOT NULL,
+            endpoint TEXT NOT NULL,
+            description TEXT,
+            method TEXT NOT NULL,
+            owner TEXT NOT NULL,
+        )"""
+    )
+
+    # Admin setup
     admin_id = str(uuid4())
     admin_password = "".join(
         random.choice(string.ascii_lowercase + string.digits) for _ in range(15)
     )
+
     print("\n\n\tNew deployment detected. Admin password is: %s\n\n" % (admin_password))
+
     cursor.execute(
         """INSERT INTO users (uuid, username, identifier, permissions, password) VALUES (?, ?, ?, ?, ?);""",
         (
@@ -87,6 +122,8 @@ def setup():
             generate_password_hash(admin_password, method="sha512", salt_length=12),
         ),
     )
+
+    # Load JavaScript files into the 'scripts' table
     for filename in listdir("scripts/"):
         if filename.endswith(".js"):
             filepath = path.join("./scripts/", filename)
@@ -95,15 +132,15 @@ def setup():
                 title = filename.replace("_", " ").replace(".js", "")
 
                 cursor.execute(
-                    """INSERT INTO scripts (uuid, name, owner, active, script) VALUES (?, ?, ?, ?, ?);""",
+                    """INSERT INTO scripts (uuid, name, owner, script) VALUES (?, ?, ?, ?);""",
                     (
                         str(uuid4()),
                         title,
                         admin_id,
-                        0,
                         javascript,
                     ),
                 )
 
+    # Commit and close the connection
     connection.commit()
     connection.close()
