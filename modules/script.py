@@ -141,7 +141,7 @@ def script():
     ).fetchall()[0][0]
 
     scripts = cursor.execute(
-        """SELECT name,uuid FROM scripts WHERE owner = ? ORDER BY id DESC;""", (owner,)
+        """SELECT name,uuid FROM scripts WHERE owner = ?;""", (owner,)
     ).fetchall()
     scripts.reverse()
     connection.close()

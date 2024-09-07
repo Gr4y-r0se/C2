@@ -98,7 +98,7 @@ def setup():
             endpoint TEXT NOT NULL,
             description TEXT,
             method TEXT NOT NULL,
-            owner TEXT NOT NULL,
+            owner TEXT NOT NULL
         )"""
     )
 
@@ -125,17 +125,20 @@ def setup():
 
     # Load JavaScript files into the 'scripts' table
     for filename in listdir("scripts/"):
-        if filename.endswith(".js"):
+        if filename.endswith(".txt"):
             filepath = path.join("./scripts/", filename)
             with open(filepath, "r") as file:
-                javascript = file.read()
-                title = filename.replace("_", " ").replace(".js", "")
+                content = file.read()
+                title, description, javascript = content.split(
+                    "\n\n------$$gr4y-r0se$$------\n\n"
+                )
 
                 cursor.execute(
-                    """INSERT INTO scripts (uuid, name, owner, script) VALUES (?, ?, ?, ?);""",
+                    """INSERT INTO scripts (uuid, name, description, owner, script) VALUES (?, ?, ?, ?, ?);""",
                     (
                         str(uuid4()),
                         title,
+                        description,
                         admin_id,
                         javascript,
                     ),

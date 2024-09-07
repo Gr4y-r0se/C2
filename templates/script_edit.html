@@ -1,4 +1,5 @@
 <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ace.css') }}">
 </head>
 
 {% extends 'template.html' %}
@@ -21,20 +22,32 @@
     </p>
         <form method="" action="">
             <label for="script_name" style="margin-bottom:10px;">Script Name:</label><br>
-            <input class="primary-text-input-small" id="script_name" placeholder="Script Name" name="name" value=""/>
+            <input class="primary-text-input-small" id="script_name" placeholder="Script Name" name="name"/>
             <input style="display: none;" id="uuid" name="uuid" value=""/>
             </br></br>
             <label for="script_description" style="margin-bottom:10px;">Script Description:</label><br>
-            <input class="primary-text-input-small" id="script_description" placeholder="Script Description" name="description" value=""/>
+            <textarea class="primary-text-input-medium" id="script_description" placeholder="Script Description" name="description"></textarea>
             </br></br>
             <label for="the_script" style="margin-bottom:10px;">Script:</label><br>
-            <textarea class="primary-text-input-large" onchange="document.getElementById('publish_button').innerHTML = 'Publish Script';" id="the_script" name="the_script" rows="5" cols="70" autofocus></textarea></br>
+            <div id="the_script" name="" rows="5" cols="70" autofocus></div>
             <button class="primary-button" type="button" id="save_button" onclick="save_script()">Save</button>
             <button class='primary-button' type="button" id="publish_button" onclick="publish_script_locally()">Publish Script</button>
         </form>
         </br></br>
     
-    <script src="{{ url_for('static', filename='js/scripts.js') }}">
+    <script src="{{ url_for('static', filename='js/scripts.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/ace.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-javascript.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/theme-twilight.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script>
+        var editor = ace.edit("the_script");
+        var JavaScriptMode = ace.require("ace/mode/javascript").Mode;
+        editor.setTheme("ace/theme/twilight");
+        editor.session.setMode(new JavaScriptMode());
     </script>
 
 {% endblock %}

@@ -141,6 +141,27 @@ a:hover {
   background-color: #222222;
 }
 
+.primary-text-input-medium {
+  width: 400px;
+  height: 80px; 
+  margin: 0;
+  word-wrap: break-word; 
+  white-space: normal; 
+  background-color: transparent;
+  border: 1px solid white;
+  padding: 5px;
+  color: white;
+  font-size: 15px; 
+}
+
+.primary-text-input-medium:hover {
+  background-color: #222222;
+}
+.primary-text-input-medium:focus {
+  background-color: #222222;
+}
+
+
 .primary-text-input-large {
   width: 100%;
   margin:0;

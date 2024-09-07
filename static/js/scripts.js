@@ -1,5 +1,5 @@
 function populate(sel) {
-    document.getElementById('activate_button').innerHTML = 'Set as Active';
+    //document.getElementById('activate_button').innerHTML = 'Set as Active';
     var id = sel.value;
     fetch(`/script/data?id=${id}`).then(response => {
         if (!response.ok) {
@@ -8,7 +8,7 @@ function populate(sel) {
         return response.json();
     })
     .then(data => {
-        document.getElementById('the_script').value = data.script;
+        editor.setValue(data.script, -1);
         document.getElementById('script_name').value = data.script_name;
         document.getElementById('script_description').value = data.script_description;
         document.getElementById('uuid').value = id;
@@ -40,7 +40,7 @@ async function save_script() {
     const scriptName = document.getElementById('script_name').value;
     const uuid = document.getElementById('uuid').value;
     const scriptDescription = document.getElementById('script_description').value;
-    const scriptContent = document.getElementById('the_script').value;
+    const scriptContent = editor.getValue();
 
     if (!scriptName || !scriptContent) {
         alert('Script name and content are required!.');
