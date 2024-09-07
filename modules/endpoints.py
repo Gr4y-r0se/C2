@@ -44,70 +44,9 @@ def serve(subpath):
     return resp
 
 
-@app.route("/endpoint/data", methods=["GET"])
+@app.route("/endpoints/list", methods=["GET"])
 @check_auth
-def serve_script_content():
-    connection = sqlite3.connect("db/c2.db")
-    cursor = connection.cursor()
-    id = request.args.get("id", default="", type=str)
-
-    script_values = cursor.execute(
-        """SELECT name,script FROM scripts WHERE uuid = ?;""",
-        (id,),
-    ).fetchall()[0]
-
-    connection.commit()
-    connection.close()
-
-    data = {"script_name": script_values[0], "script": script_values[1]}
-    return jsonify(data)
-
-
-@app.route("/endpoint/save", methods=["POST"])
-@check_auth
-def save_script():
-    connection = sqlite3.connect("db/c2.db")
-    cursor = connection.cursor()
-    owner = cursor.execute(
-        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
-    ).fetchall()[0][0]
-
-    form_data = request.form
-    try:
-        uuid = cursor.execute(
-            "SELECT uuid FROM scripts WHERE name = ? AND owner = ?;",
-            (
-                form_data["name"],
-                owner,
-            ),
-        ).fetchall()[0][0]
-        cursor.execute(
-            """UPDATE scripts SET script = ? WHERE uuid = ?;""",
-            (
-                form_data["the_script"],
-                uuid,
-            ),
-        )
-    except:
-        cursor.execute(
-            """INSERT INTO scripts (uuid, name, active, script, owner) VALUES (?, ?, ?, ?, ?);""",
-            (
-                str(uuid4()),
-                form_data["name"],
-                0,
-                form_data["the_script"],
-                owner,
-            ),
-        )
-    data = {"response_text": "Saved!", "colour": "#089305"}
-    connection.commit()
-    connection.close()
-    return jsonify(data)
-
-
-@app.route("/endpoints", methods=["GET"])
-@check_auth
-def script():
+def load_endpoints():
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
     owner = cursor.execute(
@@ -115,9 +54,118 @@ def script():
     ).fetchall()[0][0]
 
     endpoints = cursor.execute(
-        """SELECT endpoint,uuid FROM endpoints WHERE owner = ?;""", (owner,)
-    ).fetchall()
-    endpoints.reverse()
+            "SELECT uuid,name,endpoint,description,payload,method FROM endpoints WHERE owner = ?;",
+            (
+                owner,
+            ),
+        ).fetchall()
+    data = []
+    for endpoint in endpoints:
+        endpoint_name = cursor.execute(
+            "SELECT payload FROM payloads WHERE owner = ? AND uuid = ?;",
+            (
+                owner,
+                endpoint[4],
+            ),
+        ).fetchall()
+        data.append({
+            "uuid":endpoint[0],
+            "name":endpoint[1],
+            "endpoint":endpoint[2],
+            "description":endpoint[3],
+            "payload":endpoint_name,
+            "method":endpoint[5]
+        })
+
     connection.close()
+    return jsonify(data)
+
+@app.route("/endpoints/data", methods=["GET"])
+@check_auth
+def load_endpoint_data():
+    connection = sqlite3.connect("db/c2.db")
+    cursor = connection.cursor()
+    owner = cursor.execute(
+        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+    ).fetchall()[0][0]
+    id = request.args.get("id", default="", type=str)
+    try:
+        endpoint = cursor.execute(
+            "SELECT uuid,name,endpoint,description,payload,method FROM endpoints WHERE owner = ? AND uuid = ?;",
+            (
+                owner,
+                id,
+            ),
+        ).fetchall()[0]
+        payload_name = cursor.execute(
+            "SELECT payload FROM payloads WHERE owner = ? AND uuid = ?;",
+            (
+                owner,
+                endpoint[3],
+            ),
+        ).fetchall()
+
+        
+    except IndexError:
+        data = ['','','','','','']
+
+    connection.close()
+
+    data = {
+            "uuid":endpoint[0],
+            "name":endpoint[1],
+            "endpoint":endpoint[2],
+            "description":endpoint[3],
+            "payload":endpoint[4],
+            "method":endpoint[5]
+        }
+    
+    return jsonify(data),200
+
+# @app.route("/endpoint/save", methods=["POST"])
+# @check_auth
+# def save_script():
+#     connection = sqlite3.connect("db/c2.db")
+#     cursor = connection.cursor()
+#     owner = cursor.execute(
+#         """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+#     ).fetchall()[0][0]
+
+#     form_data = request.form
+#     try:
+#         uuid = cursor.execute(
+#             "SELECT uuid FROM scripts WHERE name = ? AND owner = ?;",
+#             (
+#                 form_data["name"],
+#                 owner,
+#             ),
+#         ).fetchall()[0][0]
+#         cursor.execute(
+#             """UPDATE scripts SET script = ? WHERE uuid = ?;""",
+#             (
+#                 form_data["the_script"],
+#                 uuid,
+#             ),
+#         )
+#     except:
+#         cursor.execute(
+#             """INSERT INTO scripts (uuid, name, active, script, owner) VALUES (?, ?, ?, ?, ?);""",
+#             (
+#                 str(uuid4()),
+#                 form_data["name"],
+#                 0,
+#                 form_data["the_script"],
+#                 owner,
+#             ),
+#         )
+#     data = {"response_text": "Saved!", "colour": "#089305"}
+#     connection.commit()
+#     connection.close()
+#     return jsonify(data)
+
+
+@app.route("/endpoints", methods=["GET"])
+@check_auth
+def endpoints():
     host_header = request.headers.get("Host")
-    return render_template("endpoints.html", content=endpoints, host=host_header)
+    return render_template("endpoints.html", host=host_header)

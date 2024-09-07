@@ -1,0 +1,58 @@
+.accordion-item {
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #31363F; /* Matching the background color */
+}
+
+.accordion-header {
+    background-color: #222831; /* Darker background for the header */
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white; /* Text color */
+}
+
+.accordion-button {
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    width: auto;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    color: white; /* Text color */
+}
+
+.accordion-button.active {
+    font-weight: bold;
+    color: #76ABAE; 
+}
+
+.edit-button {
+    background-color: #76ABAE; 
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.edit-button:hover {
+    background-color: #8cc8cb; /* Lighter hover color */
+}
+
+.accordion-body {
+    display: none;
+    padding: 10px;
+    background-color: #31363F; /* Matching accordion body background */
+    color: white; /* Text color for content */
+}
+
+.accordion-body p {
+    margin: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #444; /* Light separator */
+}

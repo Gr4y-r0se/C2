@@ -95,10 +95,11 @@ def setup():
     cursor.execute(
         """CREATE TABLE endpoints (
             uuid TEXT PRIMARY KEY,
-            id TEXT NOT NULL,
+            name TEXT NOT NULL,
             endpoint TEXT NOT NULL,
             description TEXT,
             method TEXT NOT NULL,
+            payload TEXT,
             owner TEXT NOT NULL
         )"""
     )
@@ -121,6 +122,20 @@ def setup():
             ),
             0,
             generate_password_hash(admin_password, method="sha512", salt_length=12),
+        ),
+    )
+
+    cursor.execute(
+        """INSERT INTO endpoints (uuid, name, endpoint, description, method, owner) VALUES (?, ?, ?, ?, ?, ?);""",
+        (
+            str(uuid4()),
+            'Default',
+            "%s.js"%("".join(
+                random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
+            )),
+            'The default endpoint generated when your account is created.',
+            'GET',
+            admin_id,
         ),
     )
 

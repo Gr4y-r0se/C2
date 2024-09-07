@@ -1,5 +1,21 @@
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/ace.css') }}">
+    <script src="{{ url_for('static', filename='js/payloads.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/ace.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-javascript.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-html.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-json.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-xml.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-text.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/theme-twilight.js') }}" type="text/javascript" charset="utf-8">
+    </script>
 </head>
 
 {% extends 'template.html' %}
@@ -44,25 +60,7 @@
             <button class="primary-button delete-button" type="button" id="delete_button" onclick="delete_payload()">Delete</button>
         </div>
     </form>
-    
-        
-    
-    <script src="{{ url_for('static', filename='js/payloads.js') }}" type="text/javascript" charset="utf-8">
-    </script>
-    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/ace.js') }}" type="text/javascript" charset="utf-8">
-    </script>
-    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-javascript.js') }}" type="text/javascript" charset="utf-8">
-    </script>
-    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-html.js') }}" type="text/javascript" charset="utf-8">
-    </script>
-    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-json.js') }}" type="text/javascript" charset="utf-8">
-    </script>
-    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-xml.js') }}" type="text/javascript" charset="utf-8">
-    </script>
-    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-text.js') }}" type="text/javascript" charset="utf-8">
-    </script>
-    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/theme-twilight.js') }}" type="text/javascript" charset="utf-8">
-    </script>
+
     <script>
         var editor = ace.edit("the_payload");
         editor.setTheme("ace/theme/twilight");

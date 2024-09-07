@@ -12,7 +12,7 @@ There are two core peices of functionality: **Manage Payloads** and **Monitor In
 
 ### Manage Payloads
 
-You can configure JavaScript payloads within this functionality, which can then pulled in and executed (for better proof of concepts!)
+You can configure payloads within this functionality, which are then served by your vairous endpoints 
 Interactions also get logged below.
 
 Looks a little like this:</br></br>
