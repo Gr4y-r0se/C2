@@ -58,14 +58,15 @@ def setup():
         )"""
     )
 
-    # Create the 'scripts' table, removed the 'active' field
+    # Create the 'payloads' table
     cursor.execute(
-        """CREATE TABLE scripts (
+        """CREATE TABLE payloads (
             uuid TEXT PRIMARY KEY,
             name TEXT NOT NULL,
             owner INT NOT NULL,
             description TEXT,
-            script TEXT NOT NULL
+            payload TEXT NOT NULL,
+            content_type TEXT NOT NULL
         )"""
     )
 
@@ -124,23 +125,24 @@ def setup():
     )
 
     # Load JavaScript files into the 'scripts' table
-    for filename in listdir("scripts/"):
+    for filename in listdir("payloads/"):
         if filename.endswith(".txt"):
-            filepath = path.join("./scripts/", filename)
+            filepath = path.join("./payloads/", filename)
             with open(filepath, "r") as file:
                 content = file.read()
-                title, description, javascript = content.split(
+                title, description, content_type, payload = content.split(
                     "\n\n------$$gr4y-r0se$$------\n\n"
                 )
 
                 cursor.execute(
-                    """INSERT INTO scripts (uuid, name, description, owner, script) VALUES (?, ?, ?, ?, ?);""",
+                    """INSERT INTO payloads (uuid, name, description, owner, content_type, payload) VALUES (?, ?, ?, ?, ?, ?);""",
                     (
                         str(uuid4()),
                         title,
                         description,
                         admin_id,
-                        javascript,
+                        content_type,
+                        payload,
                     ),
                 )
 

