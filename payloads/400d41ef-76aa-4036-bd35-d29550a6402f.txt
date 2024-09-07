@@ -6,4 +6,8 @@ old reliable!
 
 ------$$gr4y-r0se$$------
 
+text/javascript
+
+------$$gr4y-r0se$$------
+
 alert(1);

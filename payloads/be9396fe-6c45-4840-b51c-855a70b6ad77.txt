@@ -6,6 +6,10 @@ Checks if the payload is already running, and if not, renders the application in
 
 ------$$gr4y-r0se$$------
 
+text/javascript
+
+------$$gr4y-r0se$$------
+
 if (window.self === window.top) {
 
     function newDownloadFunction(event) {
