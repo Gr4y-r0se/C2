@@ -21,7 +21,7 @@ def collect(id):
     cursor = connection.cursor()
     try:
         owner = cursor.execute(
-            """SELECT username FROM users WHERE identifier = ?""", (id,)
+            """SELECT uuid FROM users WHERE identifier = ?""", (id,)
         ).fetchall()[0][0]
     except IndexError as e:
         print(e)
@@ -46,10 +46,13 @@ def collect(id):
     elif request.method == "POST":
         match request.headers.get(
             "content-type"
-        ):  # Add other content-types to this as needed
+        ).split(';')[0]:  # Add other content-types to this as needed
             case "application/json":
                 data = loads(request.json)
                 data = str("".join("%s: %s" % (k, data[k]) for k in data))
+            case "multipart/form-data":
+                data = request.form
+                data = " | ".join([i + ' : ' + data[i] for i in data])
             case _:
                 data = request.data
 
@@ -79,7 +82,10 @@ def collect(id):
 def clear():
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
-    cursor.execute("""DELETE FROM data WHERE owner = ? """, (session["name"],))
+    owner = cursor.execute(
+        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+    ).fetchall()[0][0]
+    cursor.execute("""DELETE FROM data WHERE owner = ? """, (owner,))
     connection.commit()
     connection.close()
     resp = make_response()
@@ -93,9 +99,12 @@ def clear():
 def view():
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
+    owner = cursor.execute(
+        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+    ).fetchall()[0][0]
     data = cursor.execute(
         """SELECT time_stamp, remote_ip, method, received FROM data WHERE owner = ?""",
-        (session["name"],),
+        (owner,),
     ).fetchall()
     connection.commit()
     connection.close()

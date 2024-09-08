@@ -1,31 +1,40 @@
 # C2
 
-Connect and Control (C2) is a multifunctional webapp intended for Pentesters to use on engagements. 
+Connect and Control (C2) is a multifunctional webapp designed for Pentesters to use on engagements. 
 
 ## Usage
 
-There are two core peices of functionality: **Manage Payloads** and **Monitor Interactions**.
+There are three core peices of functionality: **View Interactions**, **Manage Payloads**, and **Manage Endpoints**.
 </br></br>
-<img width="464" alt="Welcome" src="https://github.com/Gr4y-r0se/C2/assets/59868499/cf3d57e4-2c13-40ea-bf2d-640ce176a440">
+<img width="266" alt="sidebar" src="https://github.com/user-attachments/assets/fb56852b-1bba-45ef-9e9e-7cd3d73048c9">
 
+### View Interactions
+
+If you send GET or POST requests to the URL specifified in the app, it'll log them. 
+This can be used in XSS payloads to exfiltrate data.
+
+It looks a little like so:</br></br>
+<img width="1039" alt="Monitor Interactions" src="https://github.com/user-attachments/assets/53202d8f-4ea4-4965-9794-1fdcfbeef2bd">
 
 
 ### Manage Payloads
 
-You can configure JavaScript payloads within this functionality, which can then pulled in and executed (for better proof of concepts!)
+You can configure payloads within this functionality, which are then served by your various endpoints 
 Interactions also get logged below.
 
 Looks a little like this:</br></br>
-<img width="718" alt="Manage Payloads" src="https://github.com/Gr4y-r0se/C2/assets/59868499/0c5d6397-9f51-445d-ac0f-9c6c4e942841">
+<img width="1193" alt="Manage Payloads" src="https://github.com/user-attachments/assets/e0fab113-3182-46be-b860-ce6c77190c1e">
 
 
-### Monitor Interactions
+### Manage Endpoints
 
-If you send GET or POST requests to the URL specifified in the app, it'll log them. 
-This can be used in XSS payloads to exfiltrate data on local apps (if you can't access collaborator).
+New in the latest update, you can now manage your endpoints - meaning multiple endpoints can be active, all serving different payloads! For maximum havoc.
 
-It looks a little like so:</br></br>
-<img width="912" alt="Monitor Interactions" src="https://github.com/Gr4y-r0se/C2/assets/59868499/ea3b847b-fe21-4320-b45f-1c964e45f177">
+You can interrogate your currently active endpoints:</br></br>
+<img width="1572" alt="View Endpoints" src="https://github.com/user-attachments/assets/18ac54b7-cdaf-43ed-b381-2f107718213c">
+
+...and modify them as you wish:</br></br>
+<img width="877" alt="Modify Endpoint" src="https://github.com/user-attachments/assets/4e642f71-9fad-435e-b11b-cb40af3c55c6">
 
 
 ## Installation
@@ -79,7 +88,6 @@ This is released under the [MIT](https://choosealicense.com/licenses/mit/) licen
 ## Roadmap
 
 ### To Do
- - Add other content types (XML etc) for serving
  - Support templating for JS (so you can dynamically load files)
  - Support serving files through JS objects
  - Add JS obfuscation so scripts are randomised every time they are served
@@ -88,3 +96,4 @@ This is released under the [MIT](https://choosealicense.com/licenses/mit/) licen
 ### Completed
  - Make the UI better (please open a pull request if you're good at this). (Special thanks to [BDragisic](https://github.com/BDragisic) for this one.)
  - Migrate scripts to their own folder, and dynamically inject them into each user account.
+ - Add other content types (XML etc) for serving

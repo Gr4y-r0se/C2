@@ -1,0 +1,85 @@
+.accordion-item {
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.accordion-header {
+    background-color: #222831; /* Dark background */
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between; /* Space between title and buttons */
+    align-items: center;
+    color: white;
+    position: relative;
+}
+
+.accordion-title {
+    flex-grow: 1; /* The title will take up as much space as possible */
+}
+
+.accordion-button {
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    width: auto;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    color: white;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+}
+
+.edit-button, .extra-button {
+    background-color: #76ABAE; /* Matching button color */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.edit-button:hover, .extra-button:hover {
+    background-color: #8cc8cb; /* Hover state */
+}
+
+.accordion-body {
+    display: none; /* Initially hidden */
+    padding: 10px;
+    background-color: #31363F; /* Matching accordion body background */
+    color: white;
+}
+
+.accordion-body p {
+    margin: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #444; /* Light separator */
+}
+
+/* Ensure the buttons do not trigger the accordion toggle when clicked */
+.button-container button {
+    pointer-events: auto;
+}
+
+/* This applies the full width click to the accordion title */
+.accordion-title {
+    pointer-events: none;
+}
+.delete-button {
+    background-color: #d9534f;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  
+.delete-button:hover {
+    background-color: #c9302c;
+  }

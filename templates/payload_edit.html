@@ -1,0 +1,69 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ace.css') }}">
+    <script src="{{ url_for('static', filename='js/payloads.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/ace.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-javascript.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-html.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-json.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-xml.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/mode-text.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+    <script src="{{ url_for('static', filename='js/ace-src-min-noconflict/theme-twilight.js') }}" type="text/javascript" charset="utf-8">
+    </script>
+</head>
+
+{% extends 'template.html' %}
+
+
+{% block content %}
+
+    <h1 class='title'>
+        {% block title %} 
+            Payloads
+        {% endblock %}
+    </h1>
+        <p>Save a payload below, and requests to the endpoints configured will return it.</br></br>
+        You can also load a presaved payload here: <select id="presaved" class='primary-dropdown'  name="presaved" onchange="populate(this);">
+        </select>
+    </p>
+    <form method="" action="" class="form-container">
+        <div class="form-group">
+            <label for="payload_name">Name:</label>
+            <input class="primary-text-input-small" id="payload_name" placeholder="Name" name="name" />
+        </div>
+        <input style="display: none;" id="uuid" name="uuid" value="" />
+        
+        <div class="form-group">
+            <label for="payload_content_type">Content Type:</label>
+            <input class="primary-text-input-small" id="payload_content_type" oninput="setEditorMode(this.value)" placeholder="Content Type" name="content_type" />
+        </div>
+        
+        <div class="form-group">
+            <label for="payload_description">Description:</label>
+            <textarea class="primary-text-input-medium" id="payload_description" placeholder="Payload description" name="description"></textarea>
+        </div>
+    
+        <div class="form-group">
+            <label for="the_payload">Payload:</label>
+            <div id="the_payload" name=""></div>
+        </div>
+    
+        <div class="form-actions">
+            <button class="primary-button" type="button" id="save_button" onclick="save_payload()">Save</button>
+            <button class='primary-button' type="button" id="publish_button" onclick="publish_payload_locally()">Publish</button>
+            <button class="primary-button delete-button" type="button" id="delete_button" onclick="delete_payload()">Delete</button>
+        </div>
+    </form>
+
+    <script>
+        var editor = ace.edit("the_payload");
+        editor.setTheme("ace/theme/twilight");
+    </script>
+
+{% endblock %}

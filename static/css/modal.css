@@ -1,0 +1,32 @@
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(0, 0, 0, 0.5); /* Black with opacity */
+    overflow: auto;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: rgba(0, 0, 0, 0);
+    margin: 10% auto; /* Adjusted for proper centering */
+    padding: 20px;
+    border:  none;
+    width: 50%; /* Could be more or less, depending on screen size */
+    color: white;
+    border-radius: 10px; /* Matching the form's rounded corners */
+}
+
+
+
+.close:hover,
+.close:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}

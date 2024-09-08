@@ -1,0 +1,76 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/accordian.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/endpoint-buttons.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <script src="{{ url_for('static', filename='js/endpoints.js') }}"></script>
+</head>
+
+{% extends 'template.html' %}
+
+{% block content %}
+
+    <h1 class='title'>
+        {% block title %} 
+            Endpoints Management
+        {% endblock %}
+    </h1>
+    
+    <p>Manage your API endpoints below. Requests to https://{{ host }}/e/&lt;endpoint&gt; will interact with the configured endpoints.</br></br>
+    </p>
+
+    <div id="endpoint_container"></div>
+    
+    
+            <button class="primary-button" type="button" id="new_button" onclick="editEndpoint('')">New</button>
+            
+        
+
+    
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            
+            <form method="" action="" class="form-container">
+                <div class="form-group"><span class="close" onclick="closeModal()">&times;</span></div>
+                
+                <div class="form-group">
+                    <label for="endpoint_name">Name:</label>
+                    <input class="primary-text-input-small" id="endpoint_name" placeholder="Endpoint Name" name="name" value=""/>
+                    <input style="display: none;" id="endpoint_id" name="endpoint_id" />
+                </div>
+    
+                <div class="form-group">
+                    <label for="endpoint_url">Subpath:</label>
+                    <input class="primary-text-input-small" id="endpoint_url" name="url" placeholder="your-endpoint"/>
+                </div>
+    
+                <div class="form-group">
+                    <label for="endpoint_description">Description:</label>
+                    <textarea class="primary-text-input-medium" id="endpoint_description" name="url" placeholder="The description"> </textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="endpoint_method">HTTP Method:</label>
+                        <select id="endpoint_method" name="method" class="primary-dropdown">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                    </div>
+        
+                    <div class="form-group">
+                        <label for="presaved">Payload:</label>
+                        <select id="endpoint_payload" name="payload" class="primary-dropdown"></select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="primary-button" type="button" id="save_button" onclick="save_endpoint()">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    
+
+{% endblock %}
