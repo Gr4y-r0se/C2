@@ -2,7 +2,7 @@ HiJack Downloads
 
 ------$$gr4y-r0se$$------
 
-Checks if the payload is already running, and if not, renders the application in an iFrame. Then, anytime the user navigates, updates the URL, and changes the onlick of any button or anchor tag to instead download a file that's attacker controlled.
+Checks if the payload is already running, and if not, renders the application in an iFrame. Then, anytime the user navigates, updates the URL, and changes the onclick of any button or anchor tag to instead alert an attacker controlled message.
 
 ------$$gr4y-r0se$$------
 

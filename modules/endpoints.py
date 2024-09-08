@@ -21,8 +21,7 @@ def serve(subpath):
     except IndexError:
         resp.status = "500"
         return resp
-    print(payload_uuid,'test',owner)
-    
+
     try:
         payload, payload_name, content_type = cursor.execute(
             """SELECT payload,name,content_type FROM payloads WHERE uuid = ?;""", (payload_uuid,)
@@ -37,7 +36,7 @@ def serve(subpath):
             str(datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
             str(request.remote_addr),
             request.method,
-            "Fetched script titled '%s'" % payload_name,
+            "Fetched script '%s' from endpoint '%s'" %(payload_name,subpath),
             owner,
         ),
     )  # Log this in 'interactions'
@@ -68,8 +67,8 @@ def load_endpoints():
         ).fetchall()
     data = []
     for endpoint in endpoints:
-        endpoint_name = cursor.execute(
-            "SELECT payload FROM payloads WHERE owner = ? AND uuid = ?;",
+        payload_name = cursor.execute(
+            "SELECT name FROM payloads WHERE owner = ? AND uuid = ?;",
             (
                 owner,
                 endpoint[4],
@@ -80,7 +79,7 @@ def load_endpoints():
             "name":endpoint[1],
             "endpoint":endpoint[2],
             "description":endpoint[3],
-            "payload":endpoint_name,
+            "payload":payload_name,
             "method":endpoint[5]
         })
 

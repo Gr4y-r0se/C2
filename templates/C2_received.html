@@ -14,18 +14,22 @@
     </h1>
         <p>Below is all the data this C2 Server has collected this session.</br>
         GET /collect/{{ session['identifier'] }}?[data]</p>
-        <form style="padding: -7px;" method="POST" action="/clear">
-            <div class='button-container' style="display:flex;">
-                <button style="display: flex;align-items: center; margin-right: 50%;" class="primary-button" onclick="return confirm('Are you sure you want to clear data?')" type="submit">
-                    <span class="material-symbols-outlined">clear</span>
-                    Clear Data
-                </button>
-                <button style="display: flex;align-items: center;" class="primary-button" onclick="window.location='/view'" type="button">
-                    <span class="material-symbols-outlined">refresh</span>
-                    Refresh
-                </button>
+
+            
+        <form  class="form-container" method="POST" action="/clear">
+            <div class="form-group">
+                <div class='button-container' style="display:flex;">
+                    <button style="display: flex;align-items: center; margin-right: 50%;" class="primary-button" onclick="return confirm('Are you sure you want to clear data?')" type="submit">
+                        <span class="material-symbols-outlined">clear</span>
+                        Clear Data
+                    </button>
+                    <button style="display: flex;align-items: center;" class="primary-button" onclick="window.location='/view'" type="button">
+                        <span class="material-symbols-outlined">refresh</span>
+                        Refresh
+                    </button>
+                </div>
             </div>
-        </form>
+        
         </br></br>
         <table style="width: 100%;">
             <tr class='header'>
@@ -43,4 +47,5 @@
             </tr>
         {% endfor %}
         </table>
+    </form>
 {% endblock %}

@@ -319,4 +319,12 @@ label {
   flex: 1;
 }
 
+.form-container .close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
 /* Delete button styles */
+

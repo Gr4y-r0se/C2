@@ -122,16 +122,11 @@ def save_payload():
 
     form_data = request.form
     try:
-        uuid = cursor.execute(
-            "SELECT uuid FROM payloads WHERE name = ? AND owner = ?;",
+        uuid = form_data['uuid']
+        cursor.execute(
+            """UPDATE payloads SET name = ?, payload = ?, description = ?, content_type = ? WHERE uuid = ?;""",
             (
                 form_data["name"],
-                owner,
-            ),
-        ).fetchall()[0][0]
-        cursor.execute(
-            """UPDATE payloads SET payload = ?, description = ?, content_type = ? WHERE uuid = ?;""",
-            (
                 form_data["the_payload"],
                 form_data["description"],
                 form_data["content_type"],
