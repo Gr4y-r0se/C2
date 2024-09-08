@@ -121,8 +121,8 @@ def save_payload():
     ).fetchall()[0][0]
 
     form_data = request.form
-    try:
-        uuid = form_data['uuid']
+    uuid = form_data['uuid']
+    if uuid != '':
         cursor.execute(
             """UPDATE payloads SET name = ?, payload = ?, description = ?, content_type = ? WHERE uuid = ?;""",
             (
@@ -133,7 +133,7 @@ def save_payload():
                 uuid,
             ),
         )
-    except:
+    else:
         cursor.execute(
             """INSERT INTO payloads (uuid, name, description, content_type, payload, owner) VALUES (?, ?, ?, ?, ?, ?);""",
             (

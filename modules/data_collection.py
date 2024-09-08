@@ -46,10 +46,13 @@ def collect(id):
     elif request.method == "POST":
         match request.headers.get(
             "content-type"
-        ):  # Add other content-types to this as needed
+        ).split(';')[0]:  # Add other content-types to this as needed
             case "application/json":
                 data = loads(request.json)
                 data = str("".join("%s: %s" % (k, data[k]) for k in data))
+            case "multipart/form-data":
+                data = request.form
+                data = " | ".join([i + ' : ' + data[i] for i in data])
             case _:
                 data = request.data
 
