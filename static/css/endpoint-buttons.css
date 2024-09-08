@@ -1,0 +1,14 @@
+.primary-button {
+  background-color: #76ABAE;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.primary-button:hover {
+  background-color: #8cc8cb;
+}

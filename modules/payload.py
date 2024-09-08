@@ -36,13 +36,16 @@ def serve_payload_content():
 @app.route('/payload/delete/<payload_id>', methods=['DELETE'])
 @check_auth
 def delete_payload(payload_id):
+    connection = sqlite3.connect("db/c2.db")
+    cursor = connection.cursor()
+    owner = cursor.execute(
+        """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
+    ).fetchall()[0][0]
     try:
-        # Connect to the SQLite database
-        connection = sqlite3.connect("db/c2.db")
-        cursor = connection.cursor()
+  
 
         # Delete the payload where the id matches
-        cursor.execute("DELETE FROM payloads WHERE uuid = ?", (payload_id,))
+        cursor.execute("DELETE FROM payloads WHERE uuid = ? AND owner = ?;", (payload_id,owner,))
         
         # Commit the changes
         connection.commit()

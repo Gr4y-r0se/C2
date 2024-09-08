@@ -13,12 +13,13 @@
 
 /* Modal Content */
 .modal-content {
-    background-color: #31363F;
-    margin: 15% auto;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 10% auto; /* Adjusted for proper centering */
     padding: 20px;
-    border: 1px solid #888;
+    border:  none;
     width: 50%; /* Could be more or less, depending on screen size */
     color: white;
+    border-radius: 10px; /* Matching the form's rounded corners */
 }
 
 /* Close button */

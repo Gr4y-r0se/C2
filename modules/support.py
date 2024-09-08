@@ -126,7 +126,7 @@ def setup():
     )
 
     cursor.execute(
-        """INSERT INTO endpoints (uuid, name, endpoint, description, method, owner) VALUES (?, ?, ?, ?, ?, ?);""",
+        """INSERT INTO endpoints (uuid, name, endpoint, description, payload, method, owner) VALUES (?, ?, ?, ?, ?, ?, ?);""",
         (
             str(uuid4()),
             'Default',
@@ -134,6 +134,7 @@ def setup():
                 random.choice(string.ascii_lowercase + string.digits) for _ in range(10)
             )),
             'The default endpoint generated when your account is created.',
+            '',
             'GET',
             admin_id,
         ),

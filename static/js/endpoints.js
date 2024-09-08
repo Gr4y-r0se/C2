@@ -21,14 +21,17 @@ async function populateEndpoints() {
         data.forEach((endpoint, index) => {
             const accordionItem = `
                 <div class="accordion-item">
-                    <div class="accordion-header" id="heading${index}">
-                        <button class="accordion-button" type="button" aria-expanded="false">
+                    <div class="accordion-header" id="heading${index}" aria-expanded="false">
+                         <div class="accordion-title">
                             ${endpoint.name}
-                        </button>
-                        <button class="edit-button" type="button" onclick="editEndpoint('${endpoint.uuid}')">Edit</button>
+                        </div>
+                         <div class="button-container">
+                            <button class="edit-button" type="button" onclick="editEndpoint('${endpoint.uuid}')">Edit</button>
+                            <button class="delete-button" type="button" onclick="deleteEndpoint('${endpoint.uuid}')">Delete</button>
+                        </div>
                     </div>
                     <div id="collapse${index}" class="accordion-body">
-                        <p><strong>Endpoint:</strong> ${location.protocol.concat('//',location.hostname.domain,'/e/',endpoint.endpoint)}</p>
+                        <p><strong>Endpoint:</strong> ${location.protocol.concat('//',location.hostname,'/e/',endpoint.endpoint)}</p>
                         <p><strong>Description:</strong> ${endpoint.description}</p>
                         <p><strong>Method:</strong> ${endpoint.method}</p>
                         <p><strong>Payload:</strong> ${endpoint.payload}</p>
@@ -41,7 +44,7 @@ async function populateEndpoints() {
         });
 
         // Add event listeners to the buttons for toggling the accordion sections
-        const accordionButtons = document.querySelectorAll('.accordion-button');
+        const accordionButtons = document.querySelectorAll('.accordion-header');
         accordionButtons.forEach(button => {
             button.addEventListener('click', function () {
                 // Toggle the active class on the clicked button
@@ -50,7 +53,7 @@ async function populateEndpoints() {
                 button.classList.toggle('active');
 
                 // Toggle the visibility of the corresponding accordion body
-                const body = button.parentElement.nextElementSibling;
+                const body = button.nextElementSibling;
                 if (isActive) {
                     body.style.display = 'none';
                 } else {
@@ -80,6 +83,7 @@ function editEndpoint(endpointId) {
             document.getElementById('endpoint_url').value = data.endpoint;
             document.getElementById('endpoint_method').value = data.method;
             populatePresavedOptions(data.payload);
+            setSelect('endpoint_method',data.method)
             // You can also populate the payload dropdown if needed
         })
         .catch(error => console.error('Error fetching endpoint data:', error));
@@ -91,37 +95,70 @@ function closeModal() {
     modal.style.display = "none";
 }
 
-// Function to save the edited endpoint
-function saveEndpoint() {
-    const endpointId = document.getElementById('endpoint_id').value;
-    const endpointName = document.getElementById('endpointname').value;
-    const endpointUrl = document.getElementById('endpoint_url').value;
-    const endpointMethod = document.getElementById('endpoint_method').value;
+async function save_endpoint() {
 
-    // Make a PUT request to update the endpoint data
-    fetch(`/endpoints/data/${endpointId}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            name: endpointName,
-            url: endpointUrl,
-            method: endpointMethod
-        })
+    const endpointId = document.getElementById('endpoint_id').value;
+    const endpointName = document.getElementById('endpoint_name').value;
+    const endpointUrl = document.getElementById('endpoint_url').value;
+    const endpointDescription = document.getElementById('endpoint_description').value;
+    const endpointMethod = document.getElementById('endpoint_method').value;
+    const endpointPayload = document.getElementById('endpoint_payload').value;
+
+    if (!endpointName || !endpointUrl ) {
+        alert('Please ensure all inputs are filled.');
+        return;
+    }
+    const formData = new FormData();
+    formData.append('name', endpointName);
+    formData.append('uuid', endpointId);
+    formData.append('description', endpointDescription);
+    formData.append('endpoint', endpointUrl);
+    formData.append('payload', endpointPayload);
+    formData.append('method', endpointMethod);
+
+
+    await fetch('/endpoint/save', {
+        method: 'POST',
+        body: formData
+    }).then(response => {
+        return response.json();
+    }).then(data => {
+        button = document.getElementById('save_button')
+        const originalValue = button.innerHTML;
+        button.innerHTML = data.response_text;
+        button.style['background-color'] = data.colour //Spelt correctly the second time
+        setTimeout(() => {
+            button.innerHTML = originalValue;
+            button.style['background-color'] = '#76ABAE'
+        }, 5000);
     })
-    .then(response => response.json())
-    .then(data => {
-        alert('Endpoint updated successfully!');
+    .catch(error => {
+        console.error('There was a problem with the fetch operation: ', error);
+    });
+    //Finally, reload the options:
+    
+    populateEndpoints();
+
+    setTimeout(() => {
         closeModal();
-        // Optionally, reload the page or update the UI to reflect changes
-    })
-    .catch(error => console.error('Error updating endpoint:', error));
+    }, 2000)
 }
+
 
 
 window.onload = async function() {
     await populateEndpoints()
+}
+
+function setSelect(id, savedOption) {
+    var selectElement = document.getElementById(id);
+    for (let i = 0; i < selectElement.options.length; i++) {
+        // If the option value matches the known value, mark it as selected
+        if (selectElement.options[i].value === savedOption) {
+            selectElement.selectedIndex = i;
+            break; // Stop the loop once the correct option is found
+        }
+    }
 }
 
 //Stolen from payloads.js
@@ -140,7 +177,7 @@ async function populatePresavedOptions(savedOption) {
         const data = await response.json();
         
         // Get the select element by its id
-        const selectElement = document.getElementById('presaved');
+        const selectElement = document.getElementById('endpoint_payload');
         
         // Clear the existing options
         selectElement.innerHTML = '';
@@ -164,15 +201,31 @@ async function populatePresavedOptions(savedOption) {
         newOption.textContent = '--Blank--';
         selectElement.appendChild(newOption);
 
-        for (let i = 0; i < selectElement.options.length; i++) {
-            // If the option value matches the known value, mark it as selected
-            if (selectElement.options[i].value === savedOption) {
-                selectElement.selectedIndex = i;
-                break; // Stop the loop once the correct option is found
-            }
-        }
+        setSelect('endpoint_payload',savedOption)
         
     } catch (error) {
         console.error('Failed to fetch and populate options:', error);
+    }
+}
+
+
+async function deleteEndpoint(endpointId) {
+    try {
+        
+        const response = await fetch(`/endpoint/delete/${endpointId}`, {
+            method: 'DELETE',
+        });
+
+        // Parse the JSON response
+        const data = await response.json();
+
+        // Check if the delete was successful
+        if (response.ok) {
+            populateEndpoints();
+        } else {
+            console.error(`Error: ${result.message}`);
+        }
+    } catch (error) {
+        console.error('Error deleting payload:', error);
     }
 }

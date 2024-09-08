@@ -309,4 +309,14 @@ label {
   
 }
 
+.form-container .form-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Spacing between the two fields */
+}
+
+.form-container .form-row .form-group {
+  flex: 1;
+}
+
 /* Delete button styles */

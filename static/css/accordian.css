@@ -2,17 +2,21 @@
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #31363F; /* Matching the background color */
 }
 
 .accordion-header {
-    background-color: #222831; /* Darker background for the header */
+    background-color: #222831; /* Dark background */
     padding: 10px;
     cursor: pointer;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Space between title and buttons */
     align-items: center;
-    color: white; /* Text color */
+    color: white;
+    position: relative;
+}
+
+.accordion-title {
+    flex-grow: 1; /* The title will take up as much space as possible */
 }
 
 .accordion-button {
@@ -23,16 +27,16 @@
     text-align: left;
     cursor: pointer;
     outline: none;
-    color: white; /* Text color */
+    color: white;
 }
 
-.accordion-button.active {
-    font-weight: bold;
-    color: #76ABAE; 
+.button-container {
+    display: flex;
+    gap: 10px; /* Space between buttons */
 }
 
-.edit-button {
-    background-color: #76ABAE; 
+.edit-button, .extra-button {
+    background-color: #76ABAE; /* Matching button color */
     color: white;
     border: none;
     padding: 6px 12px;
@@ -40,15 +44,15 @@
     border-radius: 4px;
 }
 
-.edit-button:hover {
-    background-color: #8cc8cb; /* Lighter hover color */
+.edit-button:hover, .extra-button:hover {
+    background-color: #8cc8cb; /* Hover state */
 }
 
 .accordion-body {
-    display: none;
+    display: none; /* Initially hidden */
     padding: 10px;
     background-color: #31363F; /* Matching accordion body background */
-    color: white; /* Text color for content */
+    color: white;
 }
 
 .accordion-body p {
@@ -56,3 +60,26 @@
     padding-bottom: 10px;
     border-bottom: 1px solid #444; /* Light separator */
 }
+
+/* Ensure the buttons do not trigger the accordion toggle when clicked */
+.button-container button {
+    pointer-events: auto;
+}
+
+/* This applies the full width click to the accordion title */
+.accordion-title {
+    pointer-events: none;
+}
+.delete-button {
+    background-color: #d9534f;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  
+.delete-button:hover {
+    background-color: #c9302c;
+  }
