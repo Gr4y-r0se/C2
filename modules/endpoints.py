@@ -9,11 +9,12 @@ from flask import make_response, render_template, request, session, jsonify
 from .support import check_auth
 
 
-@app.route('/e/<path:subpath>', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route("/e/<path:subpath>", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 def serve(subpath):
     resp = make_response()
     connection = sqlite3.connect("db/c2.db")
     cursor = connection.cursor()
+
     try:
         payload_uuid, owner = cursor.execute(
             """SELECT payload,owner FROM endpoints WHERE endpoint = ?""", (subpath,)
@@ -24,10 +25,42 @@ def serve(subpath):
 
     try:
         payload, payload_name, content_type = cursor.execute(
-            """SELECT payload,name,content_type FROM payloads WHERE uuid = ?;""", (payload_uuid,)
+            """SELECT payload,name,content_type FROM payloads WHERE uuid = ?;""",
+            (payload_uuid,),
         ).fetchall()[0]
     except:
-        payload, payload_name, content_type = ['blank','blank','blank']
+        payload, payload_name, content_type = ["blank", "blank", "blank"]
+
+        # This is to deal with preflight requests
+    if request.method == "OPTIONS":
+        resp.headers["Access-Control-Allow-Origin"] = request.headers["Origin"]
+        if request.headers["Access-Control-Request-Method"]:
+            resp.headers["Access-Control-Allow-Methods"] = request.headers[
+                "Access-Control-Request-Method"
+            ]
+        if request.headers[
+            "Access-Control-Request-Headers"
+        ]:  # This required the value to be an array
+            resp.headers["Access-Control-Allow-Headers"] = request.headers[
+                "Access-Control-Request-Headers"
+            ].split(",")
+
+        cursor.execute(
+            """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ? ,?);""",
+            (
+                str(uuid4()),
+                str(datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
+                str(request.remote_addr),
+                request.method,
+                "Preflight request for script '%s' from endpoint '%s'"
+                % (payload_name, subpath),
+                owner,
+            ),
+        )  # Log this in 'interactions'
+        connection.commit()
+        connection.close()
+        resp.status = "200"
+        return resp
 
     cursor.execute(
         """INSERT INTO data (uuid, time_stamp, remote_ip, method, received, owner) VALUES (?, ?, ?, ?, ? ,?);""",
@@ -36,7 +69,7 @@ def serve(subpath):
             str(datetime.fromtimestamp(time()).strftime("%Y-%m-%d %H:%M:%S")),
             str(request.remote_addr),
             request.method,
-            "Fetched script '%s' from endpoint '%s'" %(payload_name,subpath),
+            "Fetched script '%s' from endpoint '%s'" % (payload_name, subpath),
             owner,
         ),
     )  # Log this in 'interactions'
@@ -46,7 +79,7 @@ def serve(subpath):
     resp.status = "200"
     resp.mimetype = content_type
     resp.data = payload
-    resp.headers['X-Payload-Name'] = payload_name
+    resp.headers["X-Payload-Name"] = payload_name
     return resp
 
 
@@ -60,11 +93,9 @@ def load_endpoints():
     ).fetchall()[0][0]
 
     endpoints = cursor.execute(
-            "SELECT uuid,name,endpoint,description,payload,method FROM endpoints WHERE owner = ?;",
-            (
-                owner,
-            ),
-        ).fetchall()
+        "SELECT uuid,name,endpoint,description,payload,method FROM endpoints WHERE owner = ?;",
+        (owner,),
+    ).fetchall()
     data = []
     for endpoint in endpoints:
         payload_name = cursor.execute(
@@ -74,17 +105,20 @@ def load_endpoints():
                 endpoint[4],
             ),
         ).fetchall()
-        data.append({
-            "uuid":endpoint[0],
-            "name":endpoint[1],
-            "endpoint":endpoint[2],
-            "description":endpoint[3],
-            "payload":payload_name,
-            "method":endpoint[5]
-        })
+        data.append(
+            {
+                "uuid": endpoint[0],
+                "name": endpoint[1],
+                "endpoint": endpoint[2],
+                "description": endpoint[3],
+                "payload": payload_name,
+                "method": endpoint[5],
+            }
+        )
 
     connection.close()
     return jsonify(data)
+
 
 @app.route("/endpoints/data", methods=["GET"])
 @check_auth
@@ -103,22 +137,23 @@ def load_endpoint_data():
                 id,
             ),
         ).fetchall()[0]
-        
+
     except IndexError:
-        endpoint = ['','','','','','']
+        endpoint = ["", "", "", "", "", ""]
 
     connection.close()
 
     data = {
-            "uuid":endpoint[0],
-            "name":endpoint[1],
-            "endpoint":endpoint[2],
-            "description":endpoint[3],
-            "payload":endpoint[4],
-            "method":endpoint[5]
-        }
-    
-    return jsonify(data),200
+        "uuid": endpoint[0],
+        "name": endpoint[1],
+        "endpoint": endpoint[2],
+        "description": endpoint[3],
+        "payload": endpoint[4],
+        "method": endpoint[5],
+    }
+
+    return jsonify(data), 200
+
 
 @app.route("/endpoint/save", methods=["POST"])
 @check_auth
@@ -130,8 +165,8 @@ def save_script():
     ).fetchall()[0][0]
 
     form_data = request.form
-    uuid = form_data['uuid']
-    if uuid != '':
+    uuid = form_data["uuid"]
+    if uuid != "":
         cursor.execute(
             """UPDATE endpoints SET name = ?, endpoint = ?, description = ?, payload = ?, method = ? WHERE uuid = ?;""",
             (
@@ -162,7 +197,7 @@ def save_script():
     return jsonify(data)
 
 
-@app.route('/endpoint/delete/<endpoint_id>', methods=['DELETE'])
+@app.route("/endpoint/delete/<endpoint_id>", methods=["DELETE"])
 @check_auth
 def delete_endpoint(endpoint_id):
     connection = sqlite3.connect("db/c2.db")
@@ -171,11 +206,15 @@ def delete_endpoint(endpoint_id):
         """SELECT uuid FROM users WHERE username = ?;""", (session["name"],)
     ).fetchall()[0][0]
     try:
-
-
         # Delete the payload where the id matches
-        cursor.execute("DELETE FROM endpoints WHERE uuid = ? AND owner = ?", (endpoint_id,owner,))
-        print(endpoint_id,owner)
+        cursor.execute(
+            "DELETE FROM endpoints WHERE uuid = ? AND owner = ?",
+            (
+                endpoint_id,
+                owner,
+            ),
+        )
+        print(endpoint_id, owner)
         # Commit the changes
         connection.commit()
         # Close the connection
@@ -185,8 +224,8 @@ def delete_endpoint(endpoint_id):
 
         return jsonify({"response_text": "Deleted!", "colour": "#FF0000"}), 200
     except Exception as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-        
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 @app.route("/endpoints", methods=["GET"])
 @check_auth
